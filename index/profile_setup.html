@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Setup | SkillSwipe</title>
+    <link rel="stylesheet" href="../styles/profile_setup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+
+
+<body>
+
+    <div class="cursor-glow"></div>
+
+    <div class="page">
+        <div class="wrap">
+
+            <h1>Create Your Profile</h1>
+            <p class="sub">Help us match you with the perfect teammates</p>
+
+            <form class="card">
+
+                <div class="row">
+                    <label>Name</label>
+                    <input type="text" placeholder="Your full name">
+                </div>
+
+                <div class="row">
+                    <label>Course</label>
+                    <input type="text" placeholder="B.Tech(specialization), BCA(specialization)">
+                </div>
+
+                <div class="row">
+                    <label>Year</label>
+                    <select>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <label>Skills</label>
+                    <input type="text" placeholder="React, Python, ML, UI/UX...">
+                </div>
+
+                <div class="row">
+                    <label>Experience</label>
+                    <input type="text" placeholder="Your Previous Projects">
+                </div>
+
+                <div class="row">
+                    <label>Interests</label>
+                    <input type="text" placeholder="Hackathons, Research, Startups...">
+                </div>
+
+                <div class="row">
+                    <label>Preferred Role</label>
+                    <select>
+                        <option>Frontend Developer</option>
+                        <option>Backend Developer</option>
+                        <option>DBMS</option>
+                        <option>UI/UX Designer</option>
+                        <option>Full Stack Developer</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <label>Availability</label>
+                    <select>
+                        <option>Weekends</option>
+                        <option>Evenings</option>
+                        <option>Flexible</option>
+                        <option>Full-time</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <label>GitHub Link</label>
+                    <input type="url" placeholder="https://github.com/username">
+                </div>
+
+                <div class="profile-picture-section">
+
+                    <label for="profilePic">Profile Picture</label>
+
+                    <div class="profile-pic-container">
+                        <img id="previewImage" src="defaultPFP.jpg" alt="Profile Preview">
+                    </div>
+
+                    <input type="file" id="profilePic" accept="image/*">
+
+                </div>
+
+                <button type="submit" class="btn">Save Profile</button>
+
+            </form>
+
+        </div>
+    </div>
+    <div class="bg-grid"></div>
+    <script src="../scripts/profile_setup.js"></script>
+
+</body>
+
+</html>
