@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Skill-Swipe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/swipe.css') }}">
+</head>
+
+<body>
+
+    <div class="app">
+        <div class="nav-links" style="position: absolute; top: 20px; right: 20px;">
+            <a href="../match page/match.html"
+                style="color: white; text-decoration: none; font-weight: bold; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px;">View
+                Matches</a>
+        </div>
+        <h1>TeamUp AI</h1>
+
+        <div class="card-container" id="cardContainer"></div>
+
+        <div class="actions">
+            <button class="btn reject" onclick="swipe('left')">✖</button>
+            <button class="btn like" onclick="swipe('right')">✔</button>
+        </div>
+    </div>
+    <div id="toast" class="toast"></div>
+    <script src="{{ url_for('static', filename='js/swipe.js') }}"></script>
+
+
+</body>
+
+</html>

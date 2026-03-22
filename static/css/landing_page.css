@@ -1,0 +1,367 @@
+/* ================= RESET ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #000814;
+    color: #e5e7eb;
+    line-height: 1.6;
+}
+
+/* ================= NAVBAR ================= */
+.nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 14px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 8, 20, 0.85);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 4px 20px rgba(0, 198, 255, 0.2);
+    z-index: 100;
+    animation: navDrop 0.8s ease forwards;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #6fbfe9;
+}
+
+.nav a {
+    margin-left: 26px;
+    text-decoration: none;
+    color: #cbd5f5;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav a:hover {
+    font-size: 18px;
+    color: #00c6ff;
+}
+
+/* ================= BUTTONS ================= */
+.btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    color: #fff;
+    background: linear-gradient(135deg, #003b73, #0072ff, #00c6ff);
+    box-shadow: 0 10px 25px rgba(0, 198, 255, 0.35);
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 15px 35px rgba(0, 198, 255, 0.6);
+}
+
+.btn-white {
+    background: #fff;
+    color: #003b73;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid #00c6ff;
+    color: #00c6ff;
+}
+
+.btn-outline:hover {
+    background: #00c6ff;
+    color: #000;
+}
+
+/* ================= HERO ================= */
+.hero {
+    min-height: 100vh;
+    padding: 160px 24px 80px;
+    text-align: center;
+    background:
+        radial-gradient(circle at top, rgba(0, 198, 255, 0.25), transparent 60%),
+        linear-gradient(180deg, #000814, #001d3d);
+}
+
+.hero.small {
+    min-height: auto;
+    padding: 90px 24px;
+}
+
+.hero h2,
+.hero h3 {
+    font-size: 46px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #6fbfe9, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slideUp 1s ease forwards;
+}
+
+.hero h4 {
+    font-size: 35px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #6fbfe9, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slideUp 1s ease forwards;
+
+}
+
+.hero p {
+    max-width: 720px;
+    margin: 18px auto 30px;
+    font-size: 18px;
+    color: #cbd5f5;
+    animation: slideUp 1.3s ease forwards;
+}
+
+.hero a {
+    margin: 8px;
+}
+
+/* ================= SECTIONS ================= */
+.sec {
+    padding: 90px 48px;
+}
+
+.sec.gray {
+    background: #001d3d;
+}
+
+.center {
+    text-align: center;
+}
+
+.title {
+    font-size: 34px;
+    margin-bottom: 50px;
+    color: #e0f2fe;
+}
+
+/* ================= GRID ================= */
+.grid3,
+.grid4 {
+    display: grid;
+    gap: 32px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+@media (min-width: 768px) {
+    .grid3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ================= CARDS ================= */
+.card {
+    background: linear-gradient(180deg,
+            rgba(0, 59, 115, 0.95),
+            rgba(0, 29, 61, 0.95));
+    padding: 30px 24px;
+    border-radius: 20px;
+    box-shadow:
+        0 20px 40px rgba(0, 198, 255, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(0, 198, 255, 0.15), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 70px rgba(0, 198, 255, 0.45);
+}
+
+.card h4 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #e0f2fe;
+}
+
+.card p,
+.card small {
+    color: #cbd5f5;
+    font-size: 14px;
+}
+
+/* ================= ICONS ================= */
+.icon {
+    font-size: 34px;
+    margin-bottom: 14px;
+    color: #00c6ff;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ================= HOW IT WORKS ================= */
+.num {
+    font-size: 42px;
+    font-weight: 800;
+    color: #00c6ff;
+    margin-bottom: 8px;
+}
+
+/* ================= FOOTER ================= */
+.foot {
+    padding: 26px;
+    text-align: center;
+    font-size: 14px;
+    background: #000814;
+    color: #9ca3af;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ================= FADE-IN ================= */
+.fade {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s ease;
+}
+
+.fade.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes navDrop {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+/* ==== FLOATING BUBBLES (MINIMAL) ==== */
+.bubble-bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.bubble-bg span {
+    --size: 120px;
+    --time: 20s;
+    position: absolute;
+    left: calc(var(--i) * 15%);
+    bottom: -150px;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: radial-gradient(circle,
+            rgba(0, 198, 255, 0.35),
+            rgba(0, 114, 255, 0.15),
+            transparent 70%);
+    filter: blur(2px);
+    animation: floatUp var(--time) linear infinite;
+}
+
+/* Individual bubble tweaks */
+.bubble-bg span:nth-child(1) {
+    --i: 1;
+    --size: 70px;
+    --time: 16s;
+}
+
+.bubble-bg span:nth-child(2) {
+    --i: 2;
+    --size: 140px;
+    --time: 26s;
+}
+
+.bubble-bg span:nth-child(3) {
+    --i: 3;
+    --size: 100px;
+    --time: 20s;
+}
+
+.bubble-bg span:nth-child(4) {
+    --i: 4;
+    --size: 160px;
+    --time: 30s;
+}
+
+.bubble-bg span:nth-child(5) {
+    --i: 5;
+    --size: 90px;
+    --time: 18s;
+}
+
+.bubble-bg span:nth-child(6) {
+    --i: 6;
+    --size: 60px;
+    --time: 14s;
+}
+
+@keyframes floatUp {
+    from {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(-120vh) scale(1.2);
+        opacity: 0;
+    }
+}

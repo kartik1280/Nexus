@@ -1,0 +1,310 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* ===================== BODY BACKGROUND ===================== */
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(circle at 20% 20%, rgba(0,198,255,0.45), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(0,114,255,0.45), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(0,255,255,0.35), transparent 40%),
+        linear-gradient(135deg, #001d3d, #0072ff, #00c6ff);
+
+    background-size: 220% 220%;
+    animation: bgFlow 18s ease-in-out infinite;
+}
+
+/* Moving gradient */
+@keyframes bgFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 60%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Optional premium grain */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url("https://www.transparenttextures.com/patterns/noisy.png");
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+/* ===================== CONTAINER ===================== */
+.container {
+    background: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0 35px 80px rgba(0, 114, 255, 0.45);
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+}
+
+/* ===================== TEXT ===================== */
+.container h1 {
+    color: #003b73;
+}
+
+.container p {
+    font-size: 14px;
+    line-height: 20px;
+    margin: 20px 0;
+    color: #444;
+}
+
+.container span {
+    font-size: 12px;
+    color: #666;
+}
+
+.container a {
+    font-size: 13px;
+    color: #0072ff;
+    text-decoration: none;
+}
+
+.container a:hover {
+    text-decoration: underline;
+}
+
+/* ===================== BUTTONS  ===================== */
+.container button {
+    background: linear-gradient(135deg, #0050ff, #00c6ff);
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.2s ease;
+}
+
+
+.container button.hidden {
+    background-color: transparent;
+    border-color: #fff;
+}
+
+/* ===================== FORMS ===================== */
+.container form {
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    height: 100%;
+}
+
+/* ===================== INPUTS ===================== */
+.container input {
+    background: #eef9ff;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+    color: #003b73;
+    transition: 0.3s ease;
+}
+
+.container input::placeholder {
+    color: #6fbfe9;
+}
+
+.container input:focus {
+    box-shadow: 0 0 14px rgba(0, 198, 255, 0.9);
+    transform: scale(1.02);
+}
+
+/* ===================== FORM CONTAINERS ===================== */
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transition: all 0.6s ease-in-out;
+}
+
+/* Sign In */
+.sign-in {
+    left: 0;
+    z-index: 2;
+}
+
+.container.active .sign-in {
+    transform: translateX(100%);
+}
+
+/* Sign Up */
+.sign-up {
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+}
+
+.container.active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+}
+
+/* ===================== SOCIAL ICONS ===================== */
+.social-icons {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 14px; 
+}
+
+.social-icons a {
+    border: 1px solid #b3e9ff;
+    border-radius: 20%;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: #0072ff;
+    transition: 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform-origin: center;
+}
+
+.social-icons a:hover {
+    transform: rotate(10deg) translateX(4px) scale(1.15);
+    box-shadow: 0 0 18px rgba(0, 198, 255, 0.9);
+}
+
+/* ===================== TOGGLE CONTAINER ===================== */
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    border-radius: 150px 0 0 100px;
+    z-index: 1000;
+}
+
+.container.active .toggle-container {
+    transform: translateX(-100%);
+    border-radius: 0 150px 100px 0;
+}
+
+/* ===================== TOGGLE BACKGROUND ===================== */
+.toggle {
+    background: linear-gradient(135deg, #0050ff, #00c6ff);
+    color: #ffffff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle {
+    transform: translateX(50%);
+}
+
+/* ===================== TOGGLE PANELS ===================== */
+.toggle-panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 0 40px;
+    color: #ffffff;
+}
+
+.toggle-panel h1 {
+    color: #ffffff;
+    text-shadow: 0 3px 14px rgba(0,0,0,0.4);
+}
+
+.toggle-panel p {
+    color: #e6f9ff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+/* Left */
+.toggle-left {
+    transform: translateX(-200%);
+}
+
+.container.active .toggle-left {
+    transform: translateX(0);
+}
+
+/* Right */
+.toggle-right {
+    right: 0;
+}
+
+/* ===================== MOUSE REACTIVE GLOW ===================== */
+body::before {
+    content: "";
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(
+        circle,
+        rgba(0, 255, 255, 0.35),
+        rgba(0, 114, 255, 0.15),
+       
+
+
+        transparent 70%
+    );
+    top: var(--y, 50%);
+    left: var(--x, 50%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: top 0.15s ease-out, left 0.15s ease-out;
+    z-index: -1;
+}
+/* ===================== SIGN IN AND LOGIN BUTTON ===================== */
+.container button.hidden {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.container button.hidden:hover {
+    transform: translateX(6px) scale(1.12);
+    box-shadow: 0 0 18px rgba(2, 110, 140, 0.9);
+}
+.main-btn {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.main-btn:hover {
+    transform: translateY(-2px) scale(1.08);
+    box-shadow: 0 0 20px rgba(0, 198, 255, 0.8);
+}
+
+
+ 

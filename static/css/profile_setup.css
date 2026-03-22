@@ -1,0 +1,290 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+/* ================= ROOT ================= */
+:root {
+    --blue-dark: #003b73;
+    --blue-main: #0072ff;
+    --blue-light: #00c6ff;
+    --text-dark: #111827;
+    --text-muted: #6b7280;
+}
+
+/* ================= RESET ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #000814;
+    min-height: 100vh;
+    color: white;
+}
+
+/* ================= GRID BACKGROUND ================= */
+.bg-grid {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+
+    background:
+        radial-gradient(circle at 50% 20%,
+            rgba(0, 198, 255, 0.18),
+            transparent 45%),
+        radial-gradient(circle at 80% 80%,
+            rgba(0, 114, 255, 0.14),
+            transparent 50%),
+        linear-gradient(rgba(0, 198, 255, 0.10) 1px,
+            transparent 1px),
+        linear-gradient(90deg,
+            rgba(0, 198, 255, 0.10) 1px,
+            transparent 1px),
+        linear-gradient(180deg, #000814, #001d3d);
+
+    background-size:
+        100% 100%,
+        100% 100%,
+        44px 44px,
+        44px 44px,
+        100% 100%;
+
+    mask-image: radial-gradient(circle at center,
+            black 45%,
+            transparent 80%);
+
+    animation: gridMove 22s linear infinite;
+}
+
+@keyframes gridMove {
+    from {
+        background-position: 0 0, 0 0;
+    }
+
+    to {
+        background-position: 40px 40px, 40px 40px;
+    }
+}
+
+
+/* ================= PAGE WRAPPER ================= */
+.page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 20px;
+}
+
+/* ================= CONTENT WRAP ================= */
+.wrap {
+    width: 100%;
+    max-width: 540px;
+    text-align: center;
+    animation: fadeIn 0.8s ease;
+}
+
+h1 {
+    font-size: 34px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #6fbfe9, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sub {
+    margin: 10px auto 28px;
+    font-size: 15px;
+    color: #8fb1d5;
+    max-width: 420px;
+    line-height: 1.6;
+}
+
+
+/* ================= CARD ================= */
+.card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(14px);
+    padding: 32px;
+    border-radius: 24px;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.35);
+    text-align: left;
+    animation: slideUp 0.7s ease;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 26px;
+    background: linear-gradient(120deg,
+            transparent,
+            rgb(21, 153, 189),
+            rgba(5, 71, 151, 0.884),
+            transparent);
+    filter: blur(10px);
+    z-index: -1;
+    opacity: 0.6;
+}
+
+.card:focus-within {
+    box-shadow:
+        0 0 40px rgba(0, 198, 255, 0.45),
+        0 25px 45px rgba(0, 0, 0, 0.35);
+}
+
+
+/* ================= FORM ROWS ================= */
+.row {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.row:not(:last-child) {
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ================= LABELS ================= */
+label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+}
+
+/* ================= INPUTS ================= */
+input,
+select {
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    transition: 0.25s ease;
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--blue-main);
+    box-shadow:
+        0 0 0 4px rgba(0, 114, 255, 0.25),
+        0 8px 18px rgba(0, 114, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* ================= RANGE SLIDER ================= */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--blue-main), var(--blue-light));
+    margin-top: 6px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 198, 255, 0.8);
+    cursor: pointer;
+}
+
+/* ================= SMALL TEXT ================= */
+small {
+    margin-top: 5px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ================= PROFILE STRENGTH ================= */
+.strength {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text-dark);
+}
+
+.strength span {
+    color: var(--blue-main);
+    font-weight: 600;
+}
+
+/* ================= BUTTON ================= */
+.btn {
+    width: 100%;
+    margin-top: 22px;
+    padding: 14px;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    background: linear-gradient(135deg, var(--blue-main), var(--blue-light));
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 0 20px rgba(0, 198, 255, 0.6),
+        0 12px 30px rgba(0, 114, 255, 0.45);
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ================= ACCESSIBILITY ================= */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 500px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    .card {
+        padding: 24px;
+    }
+}
