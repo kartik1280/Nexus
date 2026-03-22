@@ -15,7 +15,6 @@ cd Nexus
 ### 2. Create a virtual environment
 python -m venv env
 ### 3. Activate virtual environment
-# Windows
 env\Scripts\activate
 ### 4. Install dependencies
 pip install -r requirements.txt
