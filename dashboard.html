@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | CodeMate AI</title>
+  <meta name="description" content="Your CodeMate AI dashboard — view matches, explore events, and find your perfect hackathon team.">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+  <!-- Background Orbs -->
+  <div class="bg-orbs">
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- Topbar -->
+  <header class="topbar" id="topbar">
+    <div class="logo">CodeMate AI</div>
+    <div class="topbar-right">
+      <nav class="topbar-nav">
+        <a href="dashboard.html" class="active"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+        <a href="swipe.html"><i class="fa-solid fa-bolt"></i> Swipe</a>
+        <a href="chat.html"><i class="fa-solid fa-comments"></i> Chat</a>
+        <a href="match.html"><i class="fa-solid fa-heart"></i> Matches</a>
+      </nav>
+      <div class="user-avatar" id="userAvatar">
+        <span id="avatarInitial">U</span>
+        <span class="notif-badge"></span>
+        <div class="avatar-dropdown">
+          <a href="profile_setup.html"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+          <a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard -->
+  <main class="dashboard-main">
+
+    <!-- Welcome Hero -->
+    <section class="welcome-hero">
+      <div class="welcome-text">
+        <h1>Welcome back, <span id="userName">User</span> 👋</h1>
+        <p id="welcomeSub">Ready to find your next dream team?</p>
+      </div>
+      <div class="welcome-actions">
+        <a href="swipe.html" class="btn-primary"><i class="fa-solid fa-bolt"></i> Find Teammates</a>
+        <a href="chat.html" class="btn-ghost"><i class="fa-solid fa-comments"></i> Messages</a>
+      </div>
+    </section>
+
+    <!-- Stats Row -->
+    <section class="stats-row" id="statsRow">
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-value" id="statMatches">0</div>
+        <div class="stat-label">Total Matches</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon pink"><i class="fa-solid fa-heart"></i></div>
+        <div class="stat-value" id="statLikes">0</div>
+        <div class="stat-label">Profiles Liked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fa-solid fa-fire"></i></div>
+        <div class="stat-value" id="statStreak">0</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-trophy"></i></div>
+        <div class="stat-value" id="statEvents">0</div>
+        <div class="stat-label">Events Joined</div>
+      </div>
+    </section>
+
+    <!-- Content Grid: Matches + Actions -->
+    <section class="content-grid">
+
+      <!-- Recent Matches -->
+      <div class="glass-card" style="animation-delay: 0.25s">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-sparkles" style="color:#a855f7; margin-right:8px"></i>Recent Matches</h3>
+          <a href="match.html" class="see-all">View All →</a>
+        </div>
+        <div class="match-list" id="matchList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="glass-card" style="animation-delay: 0.30s">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-rocket" style="color:#ec4899; margin-right:8px"></i>Quick Actions</h3>
+        </div>
+        <div class="quick-actions">
+          <a href="swipe.html" class="action-item">
+            <div class="action-icon" style="background: rgba(168,85,247,0.12); color: #a855f7;">
+              <i class="fa-solid fa-shuffle"></i>
+            </div>
+            <div class="action-text">
+              <h4>Swipe Profiles</h4>
+              <p>Discover new teammates</p>
+            </div>
+            <i class="fa-solid fa-chevron-right action-arrow"></i>
+          </a>
+          <a href="chat.html" class="action-item">
+            <div class="action-icon" style="background: rgba(249,115,22,0.12); color: #f97316;">
+              <i class="fa-solid fa-message"></i>
+            </div>
+            <div class="action-text">
+              <h4>Team Chat</h4>
+              <p>Message your matches</p>
+            </div>
+            <i class="fa-solid fa-chevron-right action-arrow"></i>
+          </a>
+          <a href="profile_setup.html" class="action-item">
+            <div class="action-icon" style="background: rgba(16,185,129,0.12); color: #10b981;">
+              <i class="fa-solid fa-user-gear"></i>
+            </div>
+            <div class="action-text">
+              <h4>Edit Profile</h4>
+              <p>Update your skills & interests</p>
+            </div>
+            <i class="fa-solid fa-chevron-right action-arrow"></i>
+          </a>
+          <a href="landing_page.html" class="action-item">
+            <div class="action-icon" style="background: rgba(236,72,153,0.12); color: #ec4899;">
+              <i class="fa-solid fa-compass"></i>
+            </div>
+            <div class="action-text">
+              <h4>Explore Events</h4>
+              <p>Find hackathons to join</p>
+            </div>
+            <i class="fa-solid fa-chevron-right action-arrow"></i>
+          </a>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Events Section Header -->
+    <div class="section-header">
+      <h2><i class="fa-solid fa-calendar-star" style="color:#f97316; margin-right:10px"></i>Trending Events</h2>
+      <a href="#" class="see-all">Browse All →</a>
+    </div>
+
+    <!-- Events Row -->
+    <section class="events-row" id="eventsRow">
+      <div class="event-card">
+        <div class="event-badge live"><span class="pulse-dot"></span> Live Now</div>
+        <h4>AI Innovation Hackathon</h4>
+        <div class="event-meta">
+          <span><i class="fa-solid fa-users"></i> Team 3–5</span>
+          <span><i class="fa-solid fa-globe"></i> Online</span>
+          <span><i class="fa-solid fa-clock"></i> 2 days left</span>
+        </div>
+        <div class="event-skills">
+          <span class="skill-tag">Machine Learning</span>
+          <span class="skill-tag">Web Dev</span>
+          <span class="skill-tag">UI/UX</span>
+        </div>
+        <button class="btn-sm"><i class="fa-solid fa-bolt"></i> Join Now</button>
+      </div>
+
+      <div class="event-card">
+        <div class="event-badge upcoming"><span class="pulse-dot"></span> Upcoming</div>
+        <h4>Smart City Challenge</h4>
+        <div class="event-meta">
+          <span><i class="fa-solid fa-users"></i> Team 4</span>
+          <span><i class="fa-solid fa-location-dot"></i> Hybrid</span>
+          <span><i class="fa-solid fa-clock"></i> Apr 12</span>
+        </div>
+        <div class="event-skills">
+          <span class="skill-tag">IoT</span>
+          <span class="skill-tag">App Dev</span>
+          <span class="skill-tag">Data Science</span>
+        </div>
+        <button class="btn-sm"><i class="fa-solid fa-bell"></i> Remind Me</button>
+      </div>
+
+      <div class="event-card">
+        <div class="event-badge open"><span class="pulse-dot"></span> Open Registration</div>
+        <h4>Project Expo 2026</h4>
+        <div class="event-meta">
+          <span><i class="fa-solid fa-users"></i> Team 2–4</span>
+          <span><i class="fa-solid fa-school"></i> Campus</span>
+          <span><i class="fa-solid fa-clock"></i> May 3</span>
+        </div>
+        <div class="event-skills">
+          <span class="skill-tag">Full Stack</span>
+          <span class="skill-tag">Design</span>
+          <span class="skill-tag">Open Domain</span>
+        </div>
+        <button class="btn-sm"><i class="fa-solid fa-arrow-right"></i> Register</button>
+      </div>
+    </section>
+
+    <!-- Bottom grid: Skills + Activity -->
+    <section class="content-grid">
+
+      <!-- Your Skills -->
+      <div class="glass-card" style="animation-delay: 0.35s">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-chart-bar" style="color:#f97316; margin-right:8px"></i>Your Skills</h3>
+          <a href="profile_setup.html" class="see-all">Update →</a>
+        </div>
+        <div class="skills-visual" id="skillsChart">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="glass-card" style="animation-delay: 0.40s">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-clock-rotate-left" style="color:#10b981; margin-right:8px"></i>Activity</h3>
+        </div>
+        <div class="activity-list" id="activityList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="dashboard.js"></script>
+</body>
+
+</html>

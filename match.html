@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matches | SkillSwipe</title>
+  <link rel="stylesheet" href="match.css" />
+</head>
+
+<body>
+  <div class="bg"></div>
+
+  <header class="top">
+    <h1>Matched Teammates</h1>
+    <p>Your right-swipes appear here</p>
+  </header>
+
+  <main class="wrap">
+    <div class="bar">
+      <div class="count" id="countText">0 matches</div>
+
+      <div class="bar-actions">
+        <button class="btn ghost" id="clearBtn">Clear</button>
+        <button class="btn primary" id="teamBtn">Create Team</button>
+      </div>
+    </div>
+
+    <section class="grid" id="matchesGrid">
+      <!-- cards inserted by JS -->
+    </section>
+
+    <p class="empty" id="emptyText">No matches yet. Go swipe and come back 😄</p>
+  </main>
+
+  <script src="match.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Chat | SkillSwipe</title>
+    <meta name="description" content="Real-time group chat for SkillSwipe – collaborate with your team instantly.">
+
+    <link rel="stylesheet" href="groupchat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK (compat for simplicity) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+    <!-- Animated background -->
+    <div class="aurora-bg"></div>
+    <div class="bubble-bg">
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+    </div>
+
+    <div class="chat-app" id="chatApp">
+
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <i class="fa-solid fa-code brand-icon"></i>
+                    <span>SkillSwipe</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarClose" aria-label="Close sidebar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Current User -->
+            <div class="user-card" id="userCard">
+                <div class="user-avatar" id="userAvatarSidebar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name" id="displayName">Guest User</span>
+                    <span class="user-status"><i class="fa-solid fa-circle status-dot online"></i> Online</span>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchRooms" placeholder="Search rooms…">
+            </div>
+
+            <!-- Room List -->
+            <nav class="room-list" id="roomList">
+                <div class="room-section-title">Your Rooms</div>
+                <!-- Rooms injected by JS -->
+            </nav>
+
+            <!-- Create Room -->
+            <div class="sidebar-footer">
+                <button class="btn-create-room" id="createRoomBtn">
+                    <i class="fa-solid fa-plus"></i> New Room
+                </button>
+            </div>
+        </aside>
+
+        <!-- ============ MAIN CHAT AREA ============ -->
+        <main class="chat-main">
+
+            <!-- Chat Header -->
+            <header class="chat-header" id="chatHeader">
+                <button class="hamburger" id="sidebarOpen" aria-label="Open sidebar">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="chat-room-info">
+                    <h1 id="roomTitle">General Chat</h1>
+                    <span class="member-count" id="memberCount">
+                        <i class="fa-solid fa-users"></i> <span id="memberNum">0</span> members
+                    </span>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="membersBtn" aria-label="View members" title="View members">
+                        <i class="fa-solid fa-user-group"></i>
+                    </button>
+                    <button class="icon-btn" id="infoBtn" aria-label="Room info" title="Room info">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Messages -->
+            <section class="messages-container" id="messagesContainer">
+                <div class="messages-inner" id="messagesInner">
+                    <!-- Welcome -->
+                    <div class="system-message" id="welcomeMsg">
+                        <div class="system-bubble">
+                            <i class="fa-solid fa-rocket"></i>
+                            <p>Welcome to <strong>SkillSwipe Chat</strong>!</p>
+                            <span>Messages are synced in real-time with all connected users.</span>
+                        </div>
+                    </div>
+                    <!-- Messages injected by JS -->
+                </div>
+
+                <!-- Scroll to bottom -->
+                <button class="scroll-bottom" id="scrollBottomBtn" aria-label="Scroll to latest">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+            </section>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <span class="typing-dots">
+                    <span></span><span></span><span></span>
+                </span>
+                <span id="typingText">Someone is typing…</span>
+            </div>
+
+            <!-- Input Area -->
+            <footer class="chat-input-area" id="chatInputArea">
+                <div class="input-wrapper">
+                    <button class="input-action-btn" id="emojiBtn" aria-label="Emoji" title="Emoji">
+                        <i class="fa-regular fa-face-smile"></i>
+                    </button>
+                    <textarea id="messageInput" placeholder="Type a message…" rows="1" maxlength="2000"></textarea>
+                    <button class="input-action-btn" id="attachBtn" aria-label="Attach file" title="Attach file">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </button>
+                </div>
+                <button class="send-btn" id="sendBtn" aria-label="Send message" title="Send message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </footer>
+        </main>
+
+        <!-- ============ MEMBERS PANEL ============ -->
+        <aside class="members-panel" id="membersPanel">
+            <div class="panel-header">
+                <h2>Members</h2>
+                <button class="icon-btn" id="closeMembersBtn" aria-label="Close members panel">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="members-list" id="membersList">
+                <!-- members injected by JS -->
+            </div>
+        </aside>
+    </div>
+
+    <!-- ============ MODALS ============ -->
+
+    <!-- Join / Set Name Modal -->
+    <div class="modal-overlay" id="nameModal">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            <h2>Enter Your Name</h2>
+            <p>Choose a display name to start chatting with your team.</p>
+            <input type="text" id="nameInput" placeholder="Your display name" maxlength="30" autofocus>
+            <button class="btn-join" id="joinBtn">Join Chat</button>
+        </div>
+    </div>
+
+    <!-- Create Room Modal -->
+    <div class="modal-overlay hidden" id="roomModal">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+            <h2>Create New Room</h2>
+            <p>Give your group a name to get started.</p>
+            <input type="text" id="roomNameInput" placeholder="Room name" maxlength="40">
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancelRoomBtn">Cancel</button>
+                <button class="btn-join" id="confirmRoomBtn">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="groupchat.js"></script>
+</body>
+
+</html>
