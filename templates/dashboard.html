@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | CodeMate AI</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <script src="https://kit.fontawesome.com/your-kit.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<!-- ✅ SAFE BACKEND DATA -->
+<script>
+  const userNameFromBackend = {{ user.name | tojson if user else '"User"' }};
+  const userSkills = {{ user.skills | map(attribute='name') | list | tojson if user else "[]" }};
+</script>
+
+<header class="topbar">
+  <div class="logo">CodeMate AI</div>
+
+  <div class="topbar-right">
+    <nav class="topbar-nav">
+      <a href="{{ url_for('dashboard') }}" class="active">Dashboard</a>
+      <a href="{{ url_for('swipe') }}">Swipe</a>
+      <a href="#">Chat</a>
+      <a href="#">Matches</a>
+    </nav>
+
+    <div class="user-avatar">
+      <span id="avatarInitial">U</span>
+
+      <div class="avatar-dropdown">
+        <a href="{{ url_for('profile_setup') }}">Edit Profile</a>
+        <a href="#" id="logoutBtn">Log Out</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="dashboard-main">
+
+  <!-- Welcome -->
+  <section class="welcome-hero">
+    <div class="welcome-text">
+      <h1>Welcome back, <span id="userName">User</span> 👋</h1>
+      <p id="welcomeSub"></p>
+    </div>
+
+    <div class="welcome-actions">
+      <a href="{{ url_for('swipe') }}" class="btn-primary">Find Teammates</a>
+      <a href="#" class="btn-ghost">Messages</a>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value" id="statMatches">0</div>
+      <div class="stat-label">Matches</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statLikes">0</div>
+      <div class="stat-label">Likes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statStreak">0</div>
+      <div class="stat-label">Streak</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statEvents">0</div>
+      <div class="stat-label">Events</div>
+    </div>
+  </section>
+
+  <!-- GRID -->
+  <div class="content-grid">
+
+    <!-- Matches -->
+    <div class="glass-card">
+      <div class="card-header">
+        <h3>Recent Matches</h3>
+      </div>
+      <div id="matchList" class="match-list"></div>
+    </div>
+
+    <!-- Skills -->
+    <div class="glass-card">
+      <div class="card-header">
+        <h3>Your Skills</h3>
+      </div>
+      <div id="skillsChart"></div>
+    </div>
+
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

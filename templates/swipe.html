@@ -3,31 +3,35 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Skill-Swipe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swipe | SkillSwipe</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/swipe.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
 <body>
 
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
     <div class="app">
-        <div class="nav-links" style="position: absolute; top: 20px; right: 20px;">
-            <a href="../match page/match.html"
-                style="color: white; text-decoration: none; font-weight: bold; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px;">View
-                Matches</a>
-        </div>
-        <h1>TeamUp AI</h1>
+        <h1>Find Your Match</h1>
 
         <div class="card-container" id="cardContainer"></div>
 
-        <div class="actions">
+        <div class="actions" id="actions">
             <button class="btn reject" onclick="swipe('left')">✖</button>
             <button class="btn like" onclick="swipe('right')">✔</button>
         </div>
     </div>
+
     <div id="toast" class="toast"></div>
+
     <script src="{{ url_for('static', filename='js/swipe.js') }}"></script>
-
-
 </body>
 
 </html>

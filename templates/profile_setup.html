@@ -20,52 +20,47 @@
             <h1>Create Your Profile</h1>
             <p class="sub">Help us match you with the perfect teammates</p>
 
-            <form class="card">
+            <form class="card" method="POST" action="{{ url_for('profile_setup') }}">
 
                 <div class="row">
                     <label>Name</label>
-                    <input type="text" placeholder="Your full name">
+                    <input type="text" name="name" placeholder="Your full name">
                 </div>
 
                 <div class="row">
                     <label>Skills</label>
-                    <input type="text" placeholder="React, Python, ML, UI/UX...">
+                    <input type="text" name="skills" placeholder="React, Python, ML">
                 </div>
 
                 <div class="row">
                     <label>Interests</label>
-                    <input type="text" placeholder="Hackathons, Research, Startups...">
+                    <input type="text" name="interests" placeholder="Hackathons, Startups">
                 </div>
 
                 <div class="row">
                     <label>Preferred Role</label>
-                    <select>
-                        <option>Frontend Developer</option>
-                        <option>Backend Developer</option>
-                        <option>DBMS</option>
-                        <option>UI/UX Designer</option>
-                        <option>Full Stack Developer</option>
-                    </select>
+                    <input type="text" name="roles" placeholder="Frontend, Backend">
                 </div>
 
                 <div class="row">
                     <label>Availability</label>
-                    <select>
-                        <option>Weekends</option>
-                        <option>Evenings</option>
-                        <option>Flexible</option>
-                        <option>Full-time</option>
+                    <select name="availability" required>
+                        <option value="">Select Availability</option>
+                        <option value="weekends">weekends</option>
+                        <option value="evenings">evenings</option>
+                        <option value="flexible">flexible</option>
+                        <option value="full-time">full-time</option>
                     </select>
                 </div>
 
                 <div class="row">
                     <label>GitHub Link</label>
-                    <input type="url" placeholder="https://github.com/username">
+                    <input type="text" name="github" placeholder="https://github.com/username">
                 </div>
 
                 <div class="row">
                     <label>Commitment Level</label>
-                    <input type="range" min="1" max="10">
+                    <input type="range" name="commitment" min="1" max="10">
                     <small>1 = Casual • 10 = Hardcore Builder</small>
                 </div>
 
@@ -76,7 +71,6 @@
         </div>
     </div>
     <div class="bg-grid"></div>
-    <script src="{{ url_for('static', filename='js/profile_setup.js') }}"></script>
 </body>
 
 </html>

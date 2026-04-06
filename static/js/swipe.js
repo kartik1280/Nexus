@@ -1,161 +1,172 @@
-const profiles = [
-    {
-        name: "Aryan Sharma",
-        image: "Profiles/aryan.avif",
-        course: "BTech CSE (AI)",
-        year: "2nd Year",
-        skills: ["Python", "ML", "TensorFlow"],
-        experience: "3 hackathons · AI chatbot & recommender system"
-    },
-    {
-        name: "Riya Mehta",
-        image: "Profiles/riya.avif",
-        course: "BTech IT",
-        year: "3rd Year",
-        skills: ["React", "UI/UX", "Figma"],
-        experience: "Frontend lead in 2 hackathons"
-    },
-    {
-        name: "Kabir Verma",
-        image: "Profiles/kabir.avif",
-        course: "BTech CSE",
-        year: "1st Year",
-        skills: ["C++", "DSA", "Logic Building"],
-        experience: "Competitive programming beginner"
-    },
-    {
-        name: "Sneha Iyer",
-        image: "Profiles/sneha.avif",
-        course: "BTech CSE (Data Science)",
-        year: "4th Year",
-        skills: ["SQL", "Power BI", "Python"],
-        experience: "Data analyst intern · 5+ projects"
-    },
-    {
-        name: "Aditya Rao",
-        image: "Profiles/aditya.avif",
-        course: "BTech CSE",
-        year: "3rd Year",
-        skills: ["IoT", "Arduino", "Embedded C"],
-        experience: "Built smart energy & health monitoring systems"
-    }
-];
-
+let profiles = [];
 let currentIndex = 0;
+let matches = JSON.parse(localStorage.getItem("skillSwipeMatches")) || [];
 
 const container = document.getElementById("cardContainer");
 const toast = document.getElementById("toast");
+const actions = document.getElementById("actions");
 
-function renderCard() {
-    container.innerHTML = "";
+// ===================== DUMMY DATA =====================
+const dummyProfiles = [
+  {
+    id: 1,
+    name: "Aditya Mehta",
+    skills: "React, Node.js, GraphQL",
+    preferredRole: "Full Stack Developer",
+    availability: "Weekends",
+    year: "Year 3",
+    pic: "/static/images/aditya.avif"
+  },
+  {
+    id: 2,
+    name: "Aryan Kulkarni",
+    skills: "Python, Django, ML",
+    preferredRole: "Backend Developer",
+    availability: "Evenings",
+    year: "Year 4",
+    pic: "/static/images/aryan.avif"
+  }
+];
 
-    if (currentIndex + 1 < profiles.length) {
-        const next = document.createElement("div");
-        next.className = "card";
-        next.style.transform = "scale(0.95) translateY(10px)";
-        next.style.opacity = "0.4";
-        container.appendChild(next);
-    }
+// ===================== LOAD =====================
+function loadProfiles() {
+  profiles = dummyProfiles;
+  showProfile();
+}
 
+// ===================== RENDER =====================
+function showProfile() {
+  if (!container) return;
 
+  if (currentIndex >= profiles.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="pulse-icon"><i class="fa-solid fa-users-slash"></i></div>
+        <h3>No more profiles</h3>
+        <p>Check back later 🚀</p>
+      </div>`;
+    if (actions) actions.style.display = "none";
+    return;
+  }
 
-    const profile = profiles[currentIndex];
+  if (actions) actions.style.display = "flex";
 
-    const card = document.createElement("div");
-    card.className = "card";
+  const user = profiles[currentIndex];
 
-    card.innerHTML = `
-    <img src="${profile.image}" class="profile-pic" />
-    <h2>${profile.name}</h2>
-    <p><strong>Course:</strong> ${profile.course}</p>
-    <p><strong>Year:</strong> ${profile.year}</p>
-    <p><strong>Experience:</strong> ${profile.experience}</p>
-    <div class="skills">
-      ${profile.skills.map(skill => `<span>${skill}</span>`).join("")}
+  const skillSpans = user.skills.split(',').map(s => `<span>${s.trim()}</span>`).join('');
+
+  container.innerHTML = `
+    <div class="card" id="activeCard">
+      <div class="profile-img-wrapper">
+        <img src="${user.pic}" class="profile-img"
+          onerror="this.src='/static/images/default.png'"/>
+      </div>
+
+      <div class="profile-info">
+        <h2>${user.name} <span class="year-badge">${user.year}</span></h2>
+        <div class="info-row"><i class="fa-solid fa-code"></i> ${user.preferredRole}</div>
+        <div class="info-row"><i class="fa-regular fa-clock"></i> ${user.availability}</div>
+
+        <div class="skills">${skillSpans}</div>
+      </div>
     </div>
   `;
 
-    container.appendChild(card);
+  enableDrag(document.getElementById("activeCard"));
 }
 
-function showToast(message) {
-    if (!toast) return;
+// ===================== DRAG =====================
+function enableDrag(card) {
+  if (!card) return;
 
-    toast.textContent = message;
-    toast.classList.add("show");
+  let startX = 0;
+  let isDragging = false;
 
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2000);
-}
+  const getX = e => e.touches ? e.touches[0].clientX : e.clientX;
 
-function swipe(direction) {
-    const card = document.querySelector(".card");
-    if (!card) return;
-
-    card.classList.add(direction === "right" ? "swipe-right" : "swipe-left");
-
-    if (direction === "right") {
-        const currentProfile = profiles[currentIndex];
-        let matches = JSON.parse(localStorage.getItem('teamup_matches') || '[]');
-
-        // Avoid duplicates
-        if (!matches.some(m => m.name === currentProfile.name)) {
-            matches.push(currentProfile);
-            localStorage.setItem('teamup_matches', JSON.stringify(matches));
-        }
-
-        showToast(`Matched with ${currentProfile.name} successfully 🎉`);
-    }
-
-    setTimeout(() => {
-        currentIndex++;
-        renderCard();
-    }, 400);
-}
-
-renderCard();
-let startX = 0;
-let isDragging = false;
-
-document.addEventListener("mousedown", e => {
-    const card = document.querySelector(".card");
-    if (!card) return;
-
+  function start(e) {
     isDragging = true;
-    startX = e.clientX;
-});
+    startX = getX(e);
+    card.style.transition = "none";
+  }
 
-document.addEventListener("mousemove", e => {
+  function move(e) {
     if (!isDragging) return;
 
-    const card = document.querySelector(".card");
-    if (!card) return;
+    let currentX = getX(e);
+    let dx = currentX - startX;
+    let rotate = dx / 10;
 
-    const moveX = e.clientX - startX;
-    const rotate = moveX / 15;
+    card.style.transform = `translateX(${dx}px) rotate(${rotate}deg)`;
 
-    card.style.transform = `translateX(${moveX}px) rotate(${rotate}deg)`;
+    card.classList.toggle("preview-like", dx > 80);
+    card.classList.toggle("preview-reject", dx < -80);
+  }
 
-    card.classList.toggle("preview-like", moveX > 50);
-    card.classList.toggle("preview-reject", moveX < -50);
-});
-
-document.addEventListener("mouseup", e => {
+  function end(e) {
     if (!isDragging) return;
     isDragging = false;
 
-    const card = document.querySelector(".card");
-    if (!card) return;
+    let dx = getX(e) - startX;
+    card.style.transition = "0.3s";
 
-    const moveX = e.clientX - startX;
+    if (dx > 120) swipe("right");
+    else if (dx < -120) swipe("left");
+    else {
+      card.style.transform = "none";
+      card.classList.remove("preview-like", "preview-reject");
+    }
+  }
 
-    if (moveX > 120) swipe("right");
-    else if (moveX < -120) swipe("left");
-    else card.style.transform = "";
-});
-document.addEventListener("keydown", e => {
-    if (e.key === "ArrowRight") swipe("right");
-    if (e.key === "ArrowLeft") swipe("left");
-});
+  card.addEventListener("mousedown", start);
+  card.addEventListener("mousemove", move);
+  card.addEventListener("mouseup", end);
 
+  card.addEventListener("touchstart", start);
+  card.addEventListener("touchmove", move);
+  card.addEventListener("touchend", end);
+}
+
+// ===================== SWIPE =====================
+function swipe(direction) {
+  const card = document.getElementById("activeCard");
+  if (!card) return;
+
+  const user = profiles[currentIndex];
+
+  if (direction === "right") {
+    showToast("Matched ❤️");
+
+    if (!matches.find(m => m.id === user.id)) {
+      matches.push(user);
+      localStorage.setItem("skillSwipeMatches", JSON.stringify(matches));
+    }
+
+    card.style.transform = "translateX(500px) rotate(25deg)";
+  } else {
+    showToast("Skipped ❌");
+    card.style.transform = "translateX(-500px) rotate(-25deg)";
+  }
+
+  card.style.opacity = "0";
+
+  setTimeout(() => {
+    currentIndex++;
+    showProfile();
+  }, 300);
+}
+
+// ===================== TOAST =====================
+function showToast(msg) {
+  toast.innerText = msg;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1200);
+}
+
+window.swipe = swipe;
+
+// ===================== INIT =====================
+loadProfiles();

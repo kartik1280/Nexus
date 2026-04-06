@@ -7,99 +7,253 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-/* ===================== BODY BACKGROUND ===================== */
+/* ===================== BODY – AURORA BACKGROUND ===================== */
 body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 
     background:
-        radial-gradient(circle at 20% 20%, rgba(0,198,255,0.45), transparent 40%),
-        radial-gradient(circle at 80% 30%, rgba(0,114,255,0.45), transparent 45%),
-        radial-gradient(circle at 50% 80%, rgba(0,255,255,0.35), transparent 40%),
-        linear-gradient(135deg, #001d3d, #0072ff, #00c6ff);
+        radial-gradient(ellipse at 15% 25%, rgba(168, 85, 247, 0.50), transparent 45%),
+        radial-gradient(ellipse at 85% 20%, rgba(236, 72, 153, 0.45), transparent 40%),
+        radial-gradient(ellipse at 50% 85%, rgba(52, 211, 153, 0.30), transparent 45%),
+        radial-gradient(ellipse at 70% 60%, rgba(249, 115, 22, 0.25), transparent 40%),
+        linear-gradient(160deg, #0f0b1e, #1a1333, #140c28, #0f0b1e);
 
-    background-size: 220% 220%;
-    animation: bgFlow 18s ease-in-out infinite;
+    background-size: 280% 280%;
+    animation: auroraFlow 22s ease-in-out infinite;
 }
 
-/* Moving gradient */
-@keyframes bgFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 60%; }
-    100% { background-position: 0% 50%; }
+@keyframes auroraFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    25% {
+        background-position: 60% 30%;
+    }
+
+    50% {
+        background-position: 100% 60%;
+    }
+
+    75% {
+        background-position: 40% 80%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
-/* Optional premium grain */
+/* Subtle grain texture */
 body::after {
     content: "";
     position: fixed;
     inset: 0;
     background: url("https://www.transparenttextures.com/patterns/noisy.png");
-    opacity: 0.08;
+    opacity: 0.06;
     pointer-events: none;
+    z-index: 0;
 }
 
-/* ===================== CONTAINER ===================== */
+/* ===================== FLOATING PARTICLE SHIMMER ===================== */
+body::before {
+    content: "";
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle,
+            rgba(168, 85, 247, 0.30),
+            rgba(236, 72, 153, 0.15),
+            transparent 70%);
+    top: var(--y, 50%);
+    left: var(--x, 50%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: top 0.2s ease-out, left 0.2s ease-out;
+    z-index: -1;
+    filter: blur(30px);
+}
+
+/* ===================== CONTAINER – GLASSMORPHISM ===================== */
 .container {
-    background: #ffffff;
-    border-radius: 30px;
-    box-shadow: 0 35px 80px rgba(0, 114, 255, 0.45);
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 28px;
+    box-shadow:
+        0 40px 90px rgba(168, 85, 247, 0.30),
+        0 8px 32px rgba(236, 72, 153, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
     position: relative;
     overflow: hidden;
     width: 768px;
     max-width: 100%;
     min-height: 480px;
+    animation: containerFloat 6s ease-in-out infinite;
+    z-index: 1;
+}
+
+/* Animated border glow */
+.container::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 30px;
+    background: linear-gradient(135deg,
+            rgba(168, 85, 247, 0.5),
+            rgba(236, 72, 153, 0.5),
+            rgba(249, 115, 22, 0.4),
+            rgba(52, 211, 153, 0.4));
+    background-size: 300% 300%;
+    animation: borderGlow 6s ease infinite;
+    z-index: -1;
+    filter: blur(6px);
+    opacity: 0.6;
+}
+
+@keyframes borderGlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes containerFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
 }
 
 /* ===================== TEXT ===================== */
 .container h1 {
-    color: #003b73;
+    color: #1e1b4b;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .container p {
     font-size: 14px;
-    line-height: 20px;
+    line-height: 22px;
     margin: 20px 0;
-    color: #444;
+    color: #374151;
 }
 
 .container span {
     font-size: 12px;
-    color: #666;
+    color: #6b7280;
+    letter-spacing: 0.3px;
 }
 
 .container a {
     font-size: 13px;
-    color: #0072ff;
+    color: #7c3aed;
     text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .container a:hover {
-    text-decoration: underline;
+    color: #ec4899;
+    text-decoration: none;
 }
 
-/* ===================== BUTTONS  ===================== */
+/* ===================== PRIMARY BUTTONS ===================== */
 .container button {
-    background: linear-gradient(135deg, #0050ff, #00c6ff);
+    background: linear-gradient(135deg, #7c3aed, #a855f7, #ec4899);
+    background-size: 200% 200%;
     color: #fff;
     font-size: 12px;
-    padding: 10px 45px;
+    padding: 12px 48px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 600;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
     margin-top: 10px;
     cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: btnGradient 4s ease infinite;
 }
 
+@keyframes btnGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Shine sweep on hover */
+.container button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg,
+            transparent,
+            rgba(255, 255, 255, 0.35),
+            transparent);
+    transition: left 0.5s ease;
+}
+
+.container button:hover::before {
+    left: 100%;
+}
+
+.container button:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow:
+        0 8px 30px rgba(168, 85, 247, 0.50),
+        0 0 20px rgba(236, 72, 153, 0.30);
+}
+
+.container button:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+}
 
 .container button.hidden {
-    background-color: transparent;
-    border-color: #fff;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    color: #fff;
+    animation: none;
+}
+
+.container button.hidden::before {
+    background: linear-gradient(120deg,
+            transparent,
+            rgba(255, 255, 255, 0.20),
+            transparent);
 }
 
 /* ===================== FORMS ===================== */
@@ -113,26 +267,37 @@ body::after {
     height: 100%;
 }
 
-/* ===================== INPUTS ===================== */
+/* ===================== INPUTS – ENHANCED ===================== */
 .container input {
-    background: #eef9ff;
-    border: none;
+    background: linear-gradient(135deg, #faf5ff, #fdf2f8);
+    border: 2px solid transparent;
     margin: 8px 0;
-    padding: 10px 15px;
+    padding: 12px 16px;
     font-size: 13px;
-    border-radius: 8px;
+    border-radius: 10px;
     width: 100%;
     outline: none;
-    color: #003b73;
-    transition: 0.3s ease;
+    color: #1e1b4b;
+    font-weight: 500;
+    transition: all 0.35s ease;
 }
 
 .container input::placeholder {
-    color: #6fbfe9;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.container input:hover {
+    border-color: rgba(168, 85, 247, 0.3);
+    background: linear-gradient(135deg, #f3e8ff, #fce7f3);
 }
 
 .container input:focus {
-    box-shadow: 0 0 14px rgba(0, 198, 255, 0.9);
+    border-color: #a855f7;
+    background: #ffffff;
+    box-shadow:
+        0 0 0 4px rgba(168, 85, 247, 0.15),
+        0 0 20px rgba(168, 85, 247, 0.12);
     transform: scale(1.02);
 }
 
@@ -142,7 +307,7 @@ body::after {
     top: 0;
     height: 100%;
     width: 50%;
-    transition: all 0.6s ease-in-out;
+    transition: all 0.6s cubic-bezier(0.68, -0.15, 0.27, 1.15);
 }
 
 /* Sign In */
@@ -166,33 +331,68 @@ body::after {
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
+    animation: formFadeIn 0.6s ease forwards;
 }
 
-/* ===================== SOCIAL ICONS ===================== */
+@keyframes formFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(100%) scale(1);
+    }
+}
+
+/* ===================== SOCIAL ICONS – NEON HOVER ===================== */
 .social-icons {
     margin: 20px 0;
     display: flex;
     justify-content: center;
-    gap: 14px; 
+    gap: 16px;
 }
 
 .social-icons a {
-    border: 1px solid #b3e9ff;
-    border-radius: 20%;
-    width: 40px;
-    height: 40px;
+    border: 2px solid #f3e8ff;
+    border-radius: 12px;
+    width: 42px;
+    height: 42px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    color: #0072ff;
-    transition: 0.3s ease;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    transform-origin: center;
+    color: #a855f7;
+    font-size: 16px;
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+}
+
+/* Background fill on hover */
+.social-icons a::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    transform: scale(0);
+    border-radius: inherit;
+    transition: transform 0.35s ease;
+    z-index: -1;
+}
+
+.social-icons a:hover::before {
+    transform: scale(1);
 }
 
 .social-icons a:hover {
-    transform: rotate(10deg) translateX(4px) scale(1.15);
-    box-shadow: 0 0 18px rgba(0, 198, 255, 0.9);
+    color: #ffffff;
+    border-color: transparent;
+    transform: translateY(-4px) scale(1.1);
+    box-shadow:
+        0 8px 22px rgba(168, 85, 247, 0.45),
+        0 0 15px rgba(236, 72, 153, 0.25);
 }
 
 /* ===================== TOGGLE CONTAINER ===================== */
@@ -203,7 +403,7 @@ body::after {
     width: 50%;
     height: 100%;
     overflow: hidden;
-    transition: all 0.6s ease-in-out;
+    transition: all 0.6s cubic-bezier(0.68, -0.15, 0.27, 1.15);
     border-radius: 150px 0 0 100px;
     z-index: 1000;
 }
@@ -213,15 +413,34 @@ body::after {
     border-radius: 0 150px 100px 0;
 }
 
-/* ===================== TOGGLE BACKGROUND ===================== */
+/* ===================== TOGGLE BACKGROUND – MESH GRADIENT ===================== */
 .toggle {
-    background: linear-gradient(135deg, #0050ff, #00c6ff);
+    background:
+        radial-gradient(ellipse at 30% 0%, rgba(249, 115, 22, 0.45), transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(52, 211, 153, 0.35), transparent 50%),
+        linear-gradient(135deg, #7c3aed, #a855f7, #ec4899, #f97316);
+    background-size: 200% 200%;
+    animation: toggleMesh 8s ease-in-out infinite;
     color: #ffffff;
     position: relative;
     left: -100%;
     height: 100%;
     width: 200%;
     transition: all 0.6s ease-in-out;
+}
+
+@keyframes toggleMesh {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .container.active .toggle {
@@ -244,12 +463,19 @@ body::after {
 
 .toggle-panel h1 {
     color: #ffffff;
-    text-shadow: 0 3px 14px rgba(0,0,0,0.4);
+    font-size: 28px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: unset;
 }
 
 .toggle-panel p {
-    color: #e6f9ff;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    color: rgba(255, 255, 255, 0.90);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    font-size: 14px;
+    line-height: 1.6;
 }
 
 /* Left */
@@ -266,45 +492,49 @@ body::after {
     right: 0;
 }
 
-/* ===================== MOUSE REACTIVE GLOW ===================== */
-body::before {
-    content: "";
-    position: fixed;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(
-        circle,
-        rgba(0, 255, 255, 0.35),
-        rgba(0, 114, 255, 0.15),
-       
-
-
-        transparent 70%
-    );
-    top: var(--y, 50%);
-    left: var(--x, 50%);
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    transition: top 0.15s ease-out, left 0.15s ease-out;
-    z-index: -1;
-}
-/* ===================== SIGN IN AND LOGIN BUTTON ===================== */
+/* ===================== SIGN IN & LOGIN BUTTONS ===================== */
 .container button.hidden {
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(6px);
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.50);
+    padding: 10px 36px;
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .container button.hidden:hover {
-    transform: translateX(6px) scale(1.12);
-    box-shadow: 0 0 18px rgba(2, 110, 140, 0.9);
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px) scale(1.06);
+    box-shadow:
+        0 8px 28px rgba(255, 255, 255, 0.20),
+        0 0 20px rgba(236, 72, 153, 0.30);
+    border-color: rgba(255, 255, 255, 0.80);
 }
+
 .main-btn {
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: all 0.3s ease;
 }
 
 .main-btn:hover {
-    transform: translateY(-2px) scale(1.08);
-    box-shadow: 0 0 20px rgba(0, 198, 255, 0.8);
+    transform: translateY(-3px) scale(1.06);
+    box-shadow:
+        0 10px 35px rgba(168, 85, 247, 0.50),
+        0 0 25px rgba(236, 72, 153, 0.30);
 }
 
+/* ===================== AMBIENT FLOATING ORB ===================== */
+@keyframes orbFloat {
 
- 
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.15);
+        opacity: 0.7;
+    }
+}

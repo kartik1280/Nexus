@@ -11,8 +11,8 @@ html {
 }
 
 body {
-    background: #000814;
-    color: #e5e7eb;
+    background: #0f0b1e;
+    color: #f0e6ff;
     line-height: 1.6;
 }
 
@@ -25,9 +25,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0, 8, 20, 0.85);
+    background: rgba(15, 11, 30, 0.88);
     backdrop-filter: blur(14px);
-    box-shadow: 0 4px 20px rgba(0, 198, 255, 0.2);
+    box-shadow: 0 4px 24px rgba(168, 85, 247, 0.25);
     z-index: 100;
     animation: navDrop 0.8s ease forwards;
 }
@@ -35,20 +35,23 @@ body {
 .logo {
     font-size: 24px;
     font-weight: 700;
-    color: #6fbfe9;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .nav a {
     margin-left: 26px;
     text-decoration: none;
-    color: #cbd5f5;
+    color: #d4bfff;
     font-weight: 500;
     transition: 0.3s;
 }
 
 .nav a:hover {
     font-size: 18px;
-    color: #00c6ff;
+    color: #ec4899;
 }
 
 /* ================= BUTTONS ================= */
@@ -59,30 +62,31 @@ body {
     text-decoration: none;
     display: inline-block;
     color: #fff;
-    background: linear-gradient(135deg, #003b73, #0072ff, #00c6ff);
-    box-shadow: 0 10px 25px rgba(0, 198, 255, 0.35);
+    background: linear-gradient(135deg, #7c3aed, #a855f7, #ec4899);
+    box-shadow: 0 10px 25px rgba(168, 85, 247, 0.35);
     transition: all 0.3s ease;
 }
 
 .btn:hover {
     transform: translateY(-3px) scale(1.03);
-    box-shadow: 0 15px 35px rgba(0, 198, 255, 0.6);
+    box-shadow: 0 15px 40px rgba(236, 72, 153, 0.5);
 }
 
 .btn-white {
     background: #fff;
-    color: #003b73;
+    color: #7c3aed;
 }
 
 .btn-outline {
     background: transparent;
-    border: 2px solid #00c6ff;
-    color: #00c6ff;
+    border: 2px solid #ec4899;
+    color: #ec4899;
 }
 
 .btn-outline:hover {
-    background: #00c6ff;
-    color: #000;
+    background: linear-gradient(135deg, #ec4899, #f97316);
+    color: #fff;
+    border-color: transparent;
 }
 
 /* ================= HERO ================= */
@@ -91,8 +95,9 @@ body {
     padding: 160px 24px 80px;
     text-align: center;
     background:
-        radial-gradient(circle at top, rgba(0, 198, 255, 0.25), transparent 60%),
-        linear-gradient(180deg, #000814, #001d3d);
+        radial-gradient(circle at top, rgba(168, 85, 247, 0.3), transparent 60%),
+        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.15), transparent 50%),
+        linear-gradient(180deg, #0f0b1e, #1a1333);
 }
 
 .hero.small {
@@ -104,7 +109,8 @@ body {
 .hero h3 {
     font-size: 46px;
     font-weight: 800;
-    background: linear-gradient(90deg, #6fbfe9, #00c6ff);
+    background: linear-gradient(90deg, #a855f7, #ec4899, #f97316);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: slideUp 1s ease forwards;
@@ -113,18 +119,18 @@ body {
 .hero h4 {
     font-size: 35px;
     font-weight: 700;
-    background: linear-gradient(90deg, #6fbfe9, #00c6ff);
+    background: linear-gradient(90deg, #c084fc, #f472b6);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: slideUp 1s ease forwards;
-
 }
 
 .hero p {
     max-width: 720px;
     margin: 18px auto 30px;
     font-size: 18px;
-    color: #cbd5f5;
+    color: #d4bfff;
     animation: slideUp 1.3s ease forwards;
 }
 
@@ -138,7 +144,7 @@ body {
 }
 
 .sec.gray {
-    background: #001d3d;
+    background: #1a1333;
 }
 
 .center {
@@ -148,7 +154,10 @@ body {
 .title {
     font-size: 34px;
     margin-bottom: 50px;
-    color: #e0f2fe;
+    background: linear-gradient(135deg, #f0e6ff, #c084fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* ================= GRID ================= */
@@ -173,13 +182,13 @@ body {
 /* ================= CARDS ================= */
 .card {
     background: linear-gradient(180deg,
-            rgba(0, 59, 115, 0.95),
-            rgba(0, 29, 61, 0.95));
+            rgba(30, 20, 60, 0.95),
+            rgba(20, 12, 40, 0.95));
     padding: 30px 24px;
     border-radius: 20px;
     box-shadow:
-        0 20px 40px rgba(0, 198, 255, 0.25),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        0 20px 40px rgba(168, 85, 247, 0.2),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
@@ -189,7 +198,7 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at top, rgba(0, 198, 255, 0.15), transparent 60%);
+    background: radial-gradient(circle at top, rgba(236, 72, 153, 0.15), transparent 60%);
     opacity: 0;
     transition: opacity 0.4s ease;
 }
@@ -199,19 +208,19 @@ body {
 }
 
 .card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 30px 70px rgba(0, 198, 255, 0.45);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 30px 70px rgba(236, 72, 153, 0.35);
 }
 
 .card h4 {
     font-size: 20px;
     margin-bottom: 10px;
-    color: #e0f2fe;
+    color: #f0e6ff;
 }
 
 .card p,
 .card small {
-    color: #cbd5f5;
+    color: #d4bfff;
     font-size: 14px;
 }
 
@@ -219,7 +228,10 @@ body {
 .icon {
     font-size: 34px;
     margin-bottom: 14px;
-    color: #00c6ff;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     animation: float 3s ease-in-out infinite;
 }
 
@@ -227,7 +239,10 @@ body {
 .num {
     font-size: 42px;
     font-weight: 800;
-    color: #00c6ff;
+    background: linear-gradient(135deg, #ec4899, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin-bottom: 8px;
 }
 
@@ -236,9 +251,9 @@ body {
     padding: 26px;
     text-align: center;
     font-size: 14px;
-    background: #000814;
-    color: #9ca3af;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: #0a0816;
+    color: #8b7aac;
+    border-top: 1px solid rgba(168, 85, 247, 0.12);
 }
 
 /* ================= FADE-IN ================= */
@@ -277,7 +292,6 @@ body {
 }
 
 @keyframes float {
-
     0%,
     100% {
         transform: translateY(0);
@@ -288,7 +302,7 @@ body {
     }
 }
 
-/* ==== FLOATING BUBBLES (MINIMAL) ==== */
+/* ==== FLOATING BUBBLES (MULTI-COLOR) ==== */
 .bubble-bg {
     position: fixed;
     inset: 0;
@@ -306,48 +320,54 @@ body {
     height: var(--size);
     border-radius: 50%;
     background: radial-gradient(circle,
-            rgba(0, 198, 255, 0.35),
-            rgba(0, 114, 255, 0.15),
+            rgba(168, 85, 247, 0.3),
+            rgba(236, 72, 153, 0.15),
             transparent 70%);
     filter: blur(2px);
     animation: floatUp var(--time) linear infinite;
 }
 
-/* Individual bubble tweaks */
+/* Individual bubbles with unique colors */
 .bubble-bg span:nth-child(1) {
     --i: 1;
     --size: 70px;
     --time: 16s;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.35), rgba(249, 115, 22, 0.15), transparent 70%);
 }
 
 .bubble-bg span:nth-child(2) {
     --i: 2;
     --size: 140px;
     --time: 26s;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.30), rgba(192, 132, 252, 0.15), transparent 70%);
 }
 
 .bubble-bg span:nth-child(3) {
     --i: 3;
     --size: 100px;
     --time: 20s;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.30), rgba(250, 204, 21, 0.15), transparent 70%);
 }
 
 .bubble-bg span:nth-child(4) {
     --i: 4;
     --size: 160px;
     --time: 30s;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.25), rgba(168, 85, 247, 0.12), transparent 70%);
 }
 
 .bubble-bg span:nth-child(5) {
     --i: 5;
     --size: 90px;
     --time: 18s;
+    background: radial-gradient(circle, rgba(52, 211, 153, 0.30), rgba(168, 85, 247, 0.15), transparent 70%);
 }
 
 .bubble-bg span:nth-child(6) {
     --i: 6;
     --size: 60px;
     --time: 14s;
+    background: radial-gradient(circle, rgba(250, 204, 21, 0.30), rgba(249, 115, 22, 0.15), transparent 70%);
 }
 
 @keyframes floatUp {

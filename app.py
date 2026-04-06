@@ -59,16 +59,11 @@ class Profile(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
 
     github = db.Column(db.String(255))
-
     commitment_level = db.Column(db.Integer)
 
     availability = db.Column(
         db.Enum('weekends', 'evenings', 'flexible', 'full-time'),
         nullable=False
-    )
-
-    gender = db.Column(
-        db.Enum('male', 'female', 'non-binary', 'prefer_not_to_say')
     )
 
     __table_args__ = (
@@ -137,7 +132,7 @@ def login():
 
     if user and bcrypt.check_password_hash(user.password, password):
         session['user_id'] = user.id
-        return redirect(url_for('swipe'))
+        return redirect(url_for('dashboard'))
     else:
         return "Invalid email or password"
 
@@ -148,20 +143,23 @@ def register():
     email = request.form.get('email')
     password = request.form.get('password')
 
-    # 🚫 Prevent duplicate emails
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
         return "Email already registered"
 
-    # 🔐 Hash password
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    # 👤 Create user
     new_user = User(name=name, email=email, password=hashed_password)
 
-    db.session.add(new_user)
-    db.session.commit()
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print("REGISTER ERROR:", e)
+        return "Something went wrong"
 
+    session['user_id'] = new_user.id
     return redirect(url_for('profile_setup'))
 
 
@@ -170,10 +168,131 @@ def swipe():
     return render_template('swipe.html')
 
 
-@app.route('/profile-setup')
+@app.route('/profile-setup', methods=['GET', 'POST'])
 def profile_setup():
+    if request.method == 'POST':
+
+        user_id = session.get('user_id')
+        if not user_id:
+            return "User not logged in"
+
+        user = User.query.get(user_id)
+
+        github = request.form.get('github')
+        availability = request.form.get('availability')
+        commitment = request.form.get('commitment')
+
+        if not availability:
+            return "Please select availability"
+
+        commitment = int(commitment) if commitment else None
+
+        # ✅ Create or update profile
+        existing_profile = Profile.query.get(user_id)
+
+        if existing_profile:
+            profile = existing_profile
+            profile.github = github
+            profile.commitment_level = commitment
+            profile.availability = availability
+        else:
+            profile = Profile(
+                user_id=user_id,
+                github=github,
+                commitment_level=commitment,
+                availability=availability
+            )
+            db.session.add(profile)
+
+        # =====================
+        # Skills / Interests / Roles
+        # =====================
+        skills_input = request.form.get('skills')
+        interests_input = request.form.get('interests')
+        roles_input = request.form.get('roles')
+
+        if skills_input:
+            for s in skills_input.split(','):
+                s = s.strip()
+                if not s:
+                    continue
+                skill = Skill.query.filter_by(name=s).first()
+                if not skill:
+                    skill = Skill(name=s)
+                    db.session.add(skill)
+                if skill not in user.skills:
+                    user.skills.append(skill)
+
+        if interests_input:
+            for i in interests_input.split(','):
+                i = i.strip()
+                if not i:
+                    continue
+                interest = Interest.query.filter_by(name=i).first()
+                if not interest:
+                    interest = Interest(name=i)
+                    db.session.add(interest)
+                if interest not in user.interests:
+                    user.interests.append(interest)
+
+        if roles_input:
+            for r in roles_input.split(','):
+                r = r.strip()
+                if not r:
+                    continue
+                role = Role.query.filter_by(name=r).first()
+                if not role:
+                    role = Role(name=r)
+                    db.session.add(role)
+                if role not in user.roles:
+                    user.roles.append(role)
+
+        # ✅ Safe commit
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print("PROFILE ERROR:", e)
+            return "Something went wrong"
+
+        return redirect(url_for('dashboard'))
+
     return render_template('profile_setup.html')
 
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('auth'))
+
+    user = User.query.get(session['user_id'])
+
+    return render_template('dashboard.html', user=user)
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('auth'))
+
+
+@app.route('/api/profiles')
+def get_profiles():
+    users = User.query.all()
+
+    data = []
+    for u in users:
+        data.append({
+            "id": u.id,
+            "name": u.name,
+            "skills": ", ".join([s.name for s in u.skills]) if u.skills else "No skills",
+            "preferredRole": u.roles[0].name if u.roles else "Developer",
+            "availability": u.profile.availability if u.profile else "Flexible",
+            "year": "Year ?",
+            "pic": "/static/images/default.png"
+        })
+
+    return {"profiles": data}
 
 # =========================
 # 🚀 RUN APP
