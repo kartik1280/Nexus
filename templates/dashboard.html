@@ -13,8 +13,8 @@
 
 <!-- ✅ SAFE BACKEND DATA -->
 <script>
-  const userNameFromBackend = {{ user.name | tojson if user else '"User"' }};
-  const userSkills = {{ user.skills | map(attribute='name') | list | tojson if user else "[]" }};
+  const userNameFromBackend = {{ (user.name if user else "User") | tojson }};
+  const userSkills = {{ (user.skills | map(attribute='name') | list if user else []) | tojson }};
 </script>
 
 <header class="topbar">
