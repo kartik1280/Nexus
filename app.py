@@ -3,11 +3,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 from sqlalchemy import CheckConstraint
+from sqlalchemy.exc import IntegrityError
 import os
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
 load_dotenv()
+
+VALID_HACKATHONS = [
+    "devweek_2026",
+    "hack_for_humanity_2026",
+    "ghw_2026"
+]
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://root:{os.getenv('DB_PASSWORD')}@localhost/skillswipe"
@@ -15,6 +23,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+
+
+def get_user_team(user_id, hackathon_id):
+    return Team.query.join(TeamMember).filter(
+        TeamMember.user_id == user_id,
+        Team.hackathon_id == hackathon_id
+    ).first()
 
 # =========================
 # 👤 USER MODEL
@@ -110,6 +125,58 @@ class Role(db.Model):
 
 
 # =========================
+# 💌 INVITES MODEL
+# =========================
+class Invite(db.Model):
+    __tablename__ = 'invites'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    hackathon_id = db.Column(db.String(100), nullable=False)
+
+    status = db.Column(
+        db.Enum('pending', 'accepted', 'rejected'),
+        default='pending'
+    )
+
+    sender = db.relationship('User', foreign_keys=[sender_id])
+    receiver = db.relationship('User', foreign_keys=[receiver_id])
+
+
+
+class Team(db.Model):
+    __tablename__ = 'teams'
+
+    id = db.Column(db.Integer, primary_key=True)
+    hackathon_id = db.Column(db.String(100), nullable=False)
+
+    leader_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    leader = db.relationship('User')
+
+    members = db.relationship('TeamMember', backref='team', cascade="all, delete")
+
+    __table_args__ = (
+        db.UniqueConstraint('leader_id', 'hackathon_id', name='unique_team_per_hackathon'),
+    )
+
+
+class TeamMember(db.Model):
+    __tablename__ = 'team_members'
+
+    id = db.Column(db.Integer, primary_key=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    user = db.relationship('User')
+
+    __table_args__ = (
+        db.UniqueConstraint('team_id', 'user_id', name='unique_team_member'),
+    )
+
+# =========================
 # 🌐 ROUTES
 # =========================
 
@@ -165,7 +232,8 @@ def register():
 
 @app.route('/swipe')
 def swipe():
-    return render_template('swipe.html')
+    hackathon_id = request.args.get('hackathon')
+    return render_template('swipe.html', hackathon_id=hackathon_id)
 
 
 @app.route('/profile-setup', methods=['GET', 'POST'])
@@ -275,24 +343,441 @@ def logout():
     session.clear()
     return redirect(url_for('auth'))
 
+@app.route('/matches')
+def matches():
+    if 'user_id' not in session:
+        return redirect(url_for('auth'))
+
+    return render_template('match.html')
+
 
 @app.route('/api/profiles')
 def get_profiles():
-    users = User.query.all()
+    if 'user_id' not in session:
+        return {"profiles": []}
+
+    current_user = User.query.get(session['user_id'])
+    current_skills = set([s.name for s in current_user.skills])
+
+    users = User.query.filter(User.id != current_user.id).all()
+
+    scored_users = []
+
+    for u in users:
+        other_skills = set([s.name for s in u.skills])
+
+        if not other_skills:
+            score = 0
+        else:
+            intersection = len(current_skills & other_skills)
+            union = len(current_skills | other_skills)
+            score = intersection / union if union else 0
+
+        scored_users.append((u, score))
+
+    # 🔥 sort by best match
+    scored_users.sort(key=lambda x: x[1], reverse=True)
 
     data = []
-    for u in users:
+    for u, score in scored_users:
         data.append({
             "id": u.id,
             "name": u.name,
             "skills": ", ".join([s.name for s in u.skills]) if u.skills else "No skills",
             "preferredRole": u.roles[0].name if u.roles else "Developer",
             "availability": u.profile.availability if u.profile else "Flexible",
-            "year": "Year ?",
-            "pic": "/static/images/default.png"
+            "matchScore": round(score * 100),
+            "github": u.profile.github if u.profile else ""
         })
 
     return {"profiles": data}
+
+
+@app.route('/api/swipe/right', methods=['POST'])
+def swipe_right():
+    if 'user_id' not in session:
+        return {"error": "Not logged in"}, 401
+
+    data = request.get_json()
+
+    sender_id = session['user_id']
+    receiver_id = data.get('target_user_id')
+    hackathon_id = data.get('hackathon_id')
+
+    if hackathon_id not in VALID_HACKATHONS:
+        return {"error": "Invalid hackathon"}, 400
+
+    if not receiver_id or not hackathon_id:
+        return {"error": "Missing data"}, 400
+
+    # ❌ Prevent self-invite
+    if sender_id == receiver_id:
+        return {"error": "Cannot invite yourself"}, 400
+
+    # ❌ Prevent duplicate invite
+    existing = Invite.query.filter(
+        (
+            (Invite.sender_id == sender_id) & (Invite.receiver_id == receiver_id)
+        ) |
+        (
+            (Invite.sender_id == receiver_id) & (Invite.receiver_id == sender_id)
+        ),
+        Invite.hackathon_id == hackathon_id
+    ).first()
+
+    if existing:
+        return {"status": "already_sent"}
+
+    invite = Invite(
+        sender_id=sender_id,
+        receiver_id=receiver_id,
+        hackathon_id=hackathon_id
+    )
+
+    db.session.add(invite)
+    db.session.commit()
+
+    return {"status": "invite_sent"}
+
+
+@app.route("/api/team/create", methods=["POST"])
+def create_team():
+    if 'user_id' not in session:
+        return {"error": "Not logged in"}, 401
+
+    data = request.get_json()
+    hackathon_id = data.get("hackathon_id")
+    user_id = session["user_id"]
+
+    if hackathon_id not in VALID_HACKATHONS:
+        return {"error": "invalid_hackathon"}
+
+    existing = get_user_team(user_id, hackathon_id)
+    if existing:
+        return {"status": "already_in_team"}
+
+    try:
+        team = Team(
+            leader_id=user_id,
+            hackathon_id=hackathon_id
+        )
+        db.session.add(team)
+        db.session.flush()
+
+        db.session.add(TeamMember(
+            team_id=team.id,
+            user_id=user_id
+        ))
+
+        db.session.commit()
+
+        return {"status": "team_created"}
+
+    except Exception as e:
+        db.session.rollback()
+        print("CREATE TEAM ERROR:", e)
+        return {"error": "server_error"}
+
+@app.route('/api/team/<hackathon_id>')
+def get_team(hackathon_id):
+    if 'user_id' not in session:
+        return {"members": []}
+
+    user_id = session['user_id']
+
+    team = Team.query.join(TeamMember).filter(
+        Team.hackathon_id == hackathon_id,
+        TeamMember.user_id == user_id
+    ).first()
+
+    if not team:
+        return {"members": []}
+
+    members = TeamMember.query.filter_by(team_id=team.id).all()
+
+    data = []
+    for m in members:
+        u = User.query.get(m.user_id)
+
+        data.append({
+            "name": u.name,
+            "skills": [s.name for s in u.skills],
+            "role": u.roles[0].name if u.roles else "Developer",
+            "pic": "/static/images/default.png"
+        })
+
+    return {"members": data}
+
+@app.route("/api/invites")
+def get_invites():
+    if "user_id" not in session:
+        return jsonify({"invites": []})
+    hackathon_id = request.args.get("hackathon_id")
+
+    if not hackathon_id:
+        return jsonify({"invites": []})
+
+    invites = Invite.query.filter_by(
+        receiver_id=session["user_id"],
+        hackathon_id=hackathon_id
+    ).all()
+
+    return jsonify({
+        "invites": [
+            {
+                "invite_id": i.id,
+                "sender_name": i.sender.name,
+                "hackathon_id": i.hackathon_id
+            } for i in invites
+        ]
+    })
+
+@app.route('/api/invite/respond', methods=['POST'])
+def respond_invite():
+    if 'user_id' not in session:
+        return {"error": "Not logged in"}, 401
+
+    data = request.get_json()
+    invite_id = data.get("invite_id")
+    action = data.get("action")
+
+    invite = Invite.query.get(invite_id)
+
+    if not invite:
+        return {"error": "Invite not found"}, 404
+
+    if invite.receiver_id != session['user_id']:
+        return {"error": "Unauthorized"}, 403
+
+    user_id = invite.receiver_id
+    hackathon_id = invite.hackathon_id
+
+    try:
+        # ❌ already in team
+        existing_team = get_user_team(user_id, hackathon_id)
+        if existing_team:
+            db.session.delete(invite)
+            db.session.commit()
+            return {"status": "already_in_team"}
+
+        if action == "accept":
+
+            # find sender team
+            team = Team.query.filter_by(
+                leader_id=invite.sender_id,
+                hackathon_id=hackathon_id
+            ).first()
+
+            # create team if doesn't exist
+            if not team:
+                team = Team(
+                    leader_id=invite.sender_id,
+                    hackathon_id=hackathon_id
+                )
+                db.session.add(team)
+                db.session.flush()
+
+                db.session.add(TeamMember(
+                    team_id=team.id,
+                    user_id=invite.sender_id
+                ))
+
+            # add receiver
+            db.session.add(TeamMember(
+                team_id=team.id,
+                user_id=user_id
+            ))
+
+        # delete invite in BOTH accept/reject
+        db.session.delete(invite)
+        db.session.commit()
+
+        return {"status": "done"}
+
+    except Exception as e:
+        db.session.rollback()
+        print("INVITE RESPOND ERROR:", e)
+        return {"error": "server_error"}, 500
+
+@app.route('/api/my-team')
+def my_team():
+    if 'user_id' not in session:
+        return jsonify({"team": None})
+
+    user_id = session['user_id']
+    hackathon_id = request.args.get("hackathon_id")
+
+    if not hackathon_id:
+        return jsonify({"team": None})
+
+    # 🔍 find team where user is member
+    team = Team.query.filter_by(
+        hackathon_id=hackathon_id
+    ).join(TeamMember, Team.id == TeamMember.team_id)\
+     .filter(TeamMember.user_id == user_id)\
+     .first()
+
+    # 👑 fallback: user is leader but no members yet
+    if not team:
+        team = Team.query.filter_by(
+            leader_id=user_id,
+            hackathon_id=hackathon_id
+        ).first()
+
+    if not team:
+        return jsonify({"team": None})
+
+    members = TeamMember.query.filter_by(team_id=team.id).all()
+
+    users = []
+    for m in members:
+        u = User.query.get(m.user_id)
+        users.append({
+            "id": u.id,
+            "name": u.name,
+            "skills": [s.name for s in u.skills],
+            "role": u.roles[0].name if u.roles else "Developer",
+            "github": u.profile.github if u.profile else ""
+        })
+
+    return jsonify({
+        "team": {
+            "id": team.id,
+            "hackathon_id": team.hackathon_id,
+            "leader_id": team.leader_id,
+            "members": users
+        }
+    })
+
+
+@app.route('/api/team/leave', methods=['POST'])
+def leave_team():
+    if 'user_id' not in session:
+        return {"error": "Not logged in"}, 401
+
+    user_id = session['user_id']
+    data = request.get_json()
+    hackathon_id = data.get("hackathon_id")
+
+    if not hackathon_id:
+        return {"error": "Missing hackathon_id"}, 400
+
+    try:
+        # find team
+        team = Team.query.join(TeamMember).filter(
+            Team.hackathon_id == hackathon_id,
+            TeamMember.user_id == user_id
+        ).first()
+
+        if not team:
+            return {"status": "not_in_team"}
+
+        # 👑 leader deletes entire team
+        if team.leader_id == user_id:
+            TeamMember.query.filter_by(team_id=team.id).delete()
+            db.session.delete(team)
+            db.session.commit()
+            return {"status": "team_deleted"}
+
+        # 👇 member leaves
+        member = TeamMember.query.filter_by(
+            team_id=team.id,
+            user_id=user_id
+        ).first()
+
+        if member:
+            db.session.delete(member)
+            db.session.commit()
+            return {"status": "left"}
+
+        return {"status": "not_found"}
+
+    except Exception as e:
+        db.session.rollback()
+        print("LEAVE TEAM ERROR:", e)
+        return {"error": "server_error"}, 500
+    
+
+
+@app.route('/api/stats')
+def stats():
+    if 'user_id' not in session:
+        return {}
+
+    user_id = session['user_id']
+
+    invites_sent = Invite.query.filter_by(sender_id=user_id).count()
+    invites_received = Invite.query.filter_by(receiver_id=user_id).count()
+
+    # ✅ count teams user is part of
+    teams_joined = db.session.query(TeamMember)\
+        .filter_by(user_id=user_id)\
+        .count()
+
+    # ✅ count teams created
+    teams_created = Team.query.filter_by(leader_id=user_id).count()
+
+    return {
+        "matches": invites_received,
+        "likes": invites_sent,
+        "team": teams_joined,
+        "events": teams_created
+    }
+
+
+@app.route('/api/invite/manual', methods=['POST'])
+def manual_invite():
+    data = request.get_json()
+
+    sender_id = session.get('user_id')
+    target = data.get("target")
+    hackathon_id = data.get("hackathon_id")
+
+    if hackathon_id not in VALID_HACKATHONS:
+        return {"error": "Invalid hackathon"}
+
+    user = None
+
+    if str(target).isdigit():
+        user = User.query.get(int(target))
+    else:
+        user = User.query.filter_by(name=target).first()
+
+    if not hackathon_id:
+        return {"error": "Missing hackathon_id"}
+    
+    if not user:
+        return {"error": "User not found"}
+
+    # ❌ prevent self invite
+    if sender_id == user.id:
+        return {"error": "Cannot invite yourself"}
+
+    # ✅ check duplicate
+    existing = Invite.query.filter(
+        (
+            (Invite.sender_id == sender_id) & (Invite.receiver_id == user.id)
+        ) |
+        (
+            (Invite.sender_id == user.id) & (Invite.receiver_id == sender_id)
+        ),
+        Invite.hackathon_id == hackathon_id
+    ).first()
+
+    if existing:
+        return {"status": "already_sent"}
+
+    # ✅ CREATE invite 
+    invite = Invite(
+        sender_id=sender_id,
+        receiver_id=user.id,
+        hackathon_id=hackathon_id
+    )
+
+    db.session.add(invite)
+    db.session.commit()
+
+    return {"status": "sent"}
 
 # =========================
 # 🚀 RUN APP

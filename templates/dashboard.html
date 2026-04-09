@@ -1,104 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | CodeMate AI</title>
+  <title>Dashboard | SkillSwipe</title>
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-  <script src="https://kit.fontawesome.com/your-kit.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
 
-<!-- ✅ SAFE BACKEND DATA -->
-<script>
-  const userNameFromBackend = {{ (user.name if user else "User") | tojson }};
-  const userSkills = {{ (user.skills | map(attribute='name') | list if user else []) | tojson }};
-</script>
+  <!-- ✅ BACKEND DATA (ONLY ONCE) -->
+  <script>
+    const userNameFromBackend = {{ (user.name if user else "User") | tojson }};
+    const userSkills = {{ (user.skills | map(attribute = 'name') | list if user else []) | tojson }};
+  </script>
 
-<header class="topbar">
-  <div class="logo">CodeMate AI</div>
+  <!-- ================= HEADER ================= -->
+  <header class="topbar">
+    <div class="logo">SkillSwipe</div>
 
-  <div class="topbar-right">
-    <nav class="topbar-nav">
-      <a href="{{ url_for('dashboard') }}" class="active">Dashboard</a>
-      <a href="{{ url_for('swipe') }}">Swipe</a>
-      <a href="#">Chat</a>
-      <a href="#">Matches</a>
-    </nav>
+    <div class="topbar-right">
+      <nav class="topbar-nav">
+        <a href="{{ url_for('dashboard') }}" class="active">Dashboard</a>
+        <a href="#" onclick="startSwipe('devweek_2026')">Swipe</a>
+        <a href="#">Chat</a>
+        <a href="#" onclick="goToInvites('devweek_2026')">Invites</a>
+      </nav>
 
-    <div class="user-avatar">
-      <span id="avatarInitial">U</span>
+      <div class="user-avatar">
+        <span id="avatarInitial">U</span>
 
-      <div class="avatar-dropdown">
-        <a href="{{ url_for('profile_setup') }}">Edit Profile</a>
-        <a href="#" id="logoutBtn">Log Out</a>
+        <div class="avatar-dropdown">
+          <a href="{{ url_for('profile_setup') }}">Edit Profile</a>
+          <a href="#" id="logoutBtn">Log Out</a>
+        </div>
       </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<main class="dashboard-main">
+  <!-- ================= MAIN ================= -->
+  <main class="dashboard-main">
 
-  <!-- Welcome -->
-  <section class="welcome-hero">
-    <div class="welcome-text">
-      <h1>Welcome back, <span id="userName">User</span> 👋</h1>
-      <p id="welcomeSub"></p>
-    </div>
-
-    <div class="welcome-actions">
-      <a href="{{ url_for('swipe') }}" class="btn-primary">Find Teammates</a>
-      <a href="#" class="btn-ghost">Messages</a>
-    </div>
-  </section>
-
-  <!-- Stats -->
-  <section class="stats-row">
-    <div class="stat-card">
-      <div class="stat-value" id="statMatches">0</div>
-      <div class="stat-label">Matches</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statLikes">0</div>
-      <div class="stat-label">Likes</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statStreak">0</div>
-      <div class="stat-label">Streak</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statEvents">0</div>
-      <div class="stat-label">Events</div>
-    </div>
-  </section>
-
-  <!-- GRID -->
-  <div class="content-grid">
-
-    <!-- Matches -->
-    <div class="glass-card">
-      <div class="card-header">
-        <h3>Recent Matches</h3>
+    <!-- Welcome -->
+    <section class="welcome-hero">
+      <div class="welcome-text">
+        <h1>Welcome back, <span id="userName">User</span></h1>
+        <p id="welcomeSub"></p>
       </div>
-      <div id="matchList" class="match-list"></div>
-    </div>
 
-    <!-- Skills -->
-    <div class="glass-card">
-      <div class="card-header">
-        <h3>Your Skills</h3>
+      <div class="welcome-actions">
+        <button onclick="startSwipe('devweek_2026')" class="btn-primary">
+          Find Teammates
+        </button>
+
+        <button onclick="goToInvites('devweek_2026')" class="btn-ghost">
+          View Invites
+        </button>
       </div>
-      <div id="skillsChart"></div>
+    </section>
+
+    <!-- ================= EVENTS ================= -->
+    <section class="events-row">
+
+      <!-- DEVWEEK -->
+      <div class="event-card">
+        <h4>DeveloperWeek 2026</h4>
+        <div class="event-meta">
+          <span>Feb 2 – Feb 20</span>
+          <span>Online + San Jose</span>
+        </div>
+
+        <div class="event-skills">
+          <span class="skill-tag">AI</span>
+          <span class="skill-tag">APIs</span>
+          <span class="skill-tag">Full Stack</span>
+        </div>
+
+        <button class="btn-ghost" onclick="createTeamFromDashboard('devweek_2026')">
+          Create Team
+        </button>
+
+        <button class="btn-sm" onclick="startSwipe('devweek_2026')">
+          Build Team
+        </button>
+      </div>
+
+      <!-- HACK FOR HUMANITY -->
+      <div class="event-card">
+        <h4>Hack for Humanity 2026</h4>
+        <div class="event-meta">
+          <span>Feb 1 – Feb 28</span>
+          <span>Global (Online)</span>
+        </div>
+
+        <div class="event-skills">
+          <span class="skill-tag">Social Impact</span>
+          <span class="skill-tag">AI</span>
+        </div>
+
+        <button class="btn-ghost" onclick="createTeamFromDashboard('hack_for_humanity_2026')">
+          Create Team
+        </button>
+
+        <button class="btn-sm" onclick="startSwipe('hack_for_humanity_2026')">
+          Build Team
+        </button>
+      </div>
+
+      <!-- GHW -->
+      <div class="event-card">
+        <h4>Global Hack Week (MLH)</h4>
+        <div class="event-meta">
+          <span>Multiple weeks</span>
+          <span>Global (Online)</span>
+        </div>
+
+        <div class="event-skills">
+          <span class="skill-tag">GenAI</span>
+          <span class="skill-tag">APIs</span>
+          <span class="skill-tag">Cloud</span>
+        </div>
+
+        <button class="btn-ghost" onclick="createTeamFromDashboard('ghw_2026')">
+          Create Team
+        </button>
+
+        <button class="btn-sm" onclick="startSwipe('ghw_2026')">
+          Build Team
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ================= STATS ================= -->
+    <section class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="statMatches">0</div>
+        <div class="stat-label">Matches</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-value" id="statLikes">0</div>
+        <div class="stat-label">Likes</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-value" id="statStreak">0</div>
+        <div class="stat-label">Teams Joined</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-value" id="statEvents">0</div>
+        <div class="stat-label">Teams Created</div>
+      </div>
+    </section>
+
+    <!-- ================= GRID ================= -->
+    <div class="content-grid">
+
+      <div class="glass-card">
+        <div class="card-header">
+          <h3>Recent Matches</h3>
+        </div>
+        <div id="matchList" class="match-list"></div>
+      </div>
+
+      <div class="glass-card">
+        <div class="card-header">
+          <h3>Your Skills</h3>
+        </div>
+        <div id="skillsChart"></div>
+      </div>
+
     </div>
 
-  </div>
+  </main>
 
-</main>
+  <div class="toast" id="toast"></div>
 
-<div class="toast" id="toast"></div>
+  <!-- ================= SCRIPTS ================= -->
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
 </html>

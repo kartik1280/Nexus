@@ -12,26 +12,81 @@
 
 <body>
 
+    <!-- ================= BACKGROUND ================= -->
     <div class="bg-blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
     </div>
 
+    <!-- ================= APP ================= -->
     <div class="app">
+
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <button class="btn-ghost" onclick="goToDashboard()">
+                ← Dashboard
+            </button>
+
+
+            <button class="btn-ghost" onclick="goToMatches()" >
+                Team →
+            </button>
+        </div>
+
         <h1>Find Your Match</h1>
 
+        <!-- CARDS -->
         <div class="card-container" id="cardContainer"></div>
 
+        <!-- ACTION BUTTONS -->
         <div class="actions" id="actions">
-            <button class="btn reject" onclick="swipe('left')">✖</button>
-            <button class="btn like" onclick="swipe('right')">✔</button>
+            <button class="btn reject" onclick="swipe('left')">
+                <i class="fas fa-times"></i>
+            </button>
+            <button class="btn like" onclick="swipe('right')">
+                <i class="fas fa-heart"></i>
+            </button>
         </div>
+
     </div>
 
+    <!-- TOAST -->
     <div id="toast" class="toast"></div>
 
+    <!-- ================= SCRIPT ================= -->
     <script src="{{ url_for('static', filename='js/swipe.js') }}"></script>
+
+    <script>
+        // ✅ Get hackathon from URL (SOURCE OF TRUTH)
+        const hackathonId = new URLSearchParams(window.location.search).get("hackathon");
+
+        const hackathonNames = {
+            "devweek_2026": "DeveloperWeek 2026",
+            "hack_for_humanity_2026": "Hack for Humanity 2026",
+            "ghw_2026": "Global Hack Week"
+        };
+
+        // ❌ if missing → redirect
+        if (!hackathonId) {
+            alert("No hackathon selected!");
+            window.location.href = "/dashboard";
+        }
+
+        // ✅ Show hackathon name
+        document.getElementById("hackathonTitle").innerText =
+            hackathonNames[hackathonId] || "Hackathon";
+
+        // NAVIGATION
+        function goToDashboard() {
+            window.location.href = "/dashboard";
+        }
+
+        function goToMatches() {
+            window.location.href = `/matches?hackathon=${hackathonId}`;
+        }
+    </script>
+
 </body>
 
 </html>

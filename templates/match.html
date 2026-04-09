@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matches | SkillSwipe</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/match.css') }}">
+</head>
+
+<body>
+  <div class="bg"></div>
+
+  <!-- ================= HEADER ================= -->
+  <header class="top">
+    <h1>Your Team</h1>
+    <p>Manage your team & invites</p>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main class="wrap">
+
+    <!-- TOP BAR -->
+    <div class="bar">
+      
+      <!-- ✅ HACKATHON SWITCH -->
+      <select id="hackathonSelect" onchange="switchHackathon()">
+        <option value="devweek_2026">DeveloperWeek</option>
+        <option value="hack_for_humanity_2026">Hack for Humanity</option>
+        <option value="ghw_2026">Global Hack Week</option>
+      </select>
+
+      <div class="count" id="countText">Team</div>
+
+      <div class="bar-actions">
+        <button class="btn ghost" onclick="goBackToDashboard()">Dashboard</button>
+        <button class="btn primary" onclick="goToSwipe()">Find Teammates</button>
+      </div>
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <section class="layout">
+
+      <!-- INVITES -->
+      <div class="invites-panel">
+        <div class="invite-box">
+          <input id="inviteInput" placeholder="Enter name or user ID">
+          <button id="inviteBtn">Invite</button>
+        </div>
+
+        <h2>Invitations</h2>
+        <div id="invitesList"></div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="team-panel">
+        <h2>Your Team</h2>
+        <div id="teamContainer"></div>
+      </div>
+
+    </section>
+
+    <!-- EMPTY STATE -->
+    <p class="empty" id="emptyText">
+      No activity yet. Start swiping 🚀
+    </p>
+
+  </main>
+
+  <!-- ================= SCRIPT ================= -->
+  <script src="{{ url_for('static', filename='js/match.js') }}"></script>
+
+</body>
+
+</html>

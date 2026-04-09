@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat | SkillSwipe</title>
+    <link rel="stylesheet" href="personal_chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <header class="chat-header">
+            <button class="back-btn" onclick="window.location.href='match.html'">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <div class="user-info">
+                <img id="chatAvatar" src="defaultPFP.jpeg" alt="User Avatar" class="avatar">
+                <div class="user-details">
+                    <h2 id="chatName">Loading...</h2>
+                    <span class="status">Online</span>
+                </div>
+            </div>
+            <button class="options-btn">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+        </header>
+
+        <!-- Messages Area -->
+        <main class="chat-messages" id="chatArea">
+            <div class="system-message">
+                <p>You matched with <span id="systemName">...</span> on SkillSwipe!</p>
+                <small>Say hi and start collaborating!</small>
+            </div>
+            <!-- Messages inserted dynamically -->
+        </main>
+
+        <!-- Input Area -->
+        <footer class="chat-input-area">
+            <button class="attach-btn"><i class="fa-solid fa-paperclip"></i></button>
+            <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+            <button class="send-btn" id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+        </footer>
+    </div>
+
+    <script src="personal_chat.js"></script>
+</body>
+</html>
