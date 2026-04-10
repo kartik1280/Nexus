@@ -1,6 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
-const chatWithName = urlParams.get('chatwith') || 'Partner';
-
+const receiverId = urlParams.get('user_id');
+const chatWithName = urlParams.get('name') || 'Partner';
 document.getElementById('chatName').innerText = chatWithName;
 document.getElementById('systemName').innerText = chatWithName;
 
@@ -9,6 +9,14 @@ const matches = JSON.parse(localStorage.getItem('skillSwipeMatches')) || [];
 const matchedProfile = matches.find(m => m.name === chatWithName);
 if (matchedProfile && matchedProfile.pic) {
     document.getElementById('chatAvatar').src = matchedProfile.pic;
+}
+
+function goBack() {
+    if (!hackathonId) {
+        window.location.href = "/dashboard";
+    } else {
+        window.location.href = `/matches?hackathon=${hackathonId}`;
+    }
 }
 
 const chatArea = document.getElementById('chatArea');
@@ -44,31 +52,26 @@ function appendMessage(text, type) {
     chatArea.scrollTop = chatArea.scrollHeight;
 }
 
-// Bot auto-reply Mock
-const botReplies = [
-    "Hey! Yeah, I'm really looking forward to teaming up.",
-    "That sounds like a great idea!",
-    "Actually, I have some experience with that stack.",
-    "Let's schedule a brief call tomorrow to discuss further?",
-    "Awesome, sending you my github repo now.",
-    "I agree. What time works best for you?"
-];
 
-function handleSend() {
+
+async function handleSend() {
     const text = messageInput.value.trim();
-    if (text) {
-        appendMessage(text, 'sent');
-        messageInput.value = '';
+    if (!text) return;
 
-        // Mock auto-reply
-        setTimeout(() => {
-            document.querySelector('.status').innerText = "typing...";
-            setTimeout(() => {
-                const randomReply = botReplies[Math.floor(Math.random() * botReplies.length)];
-                appendMessage(randomReply, 'received');
-                document.querySelector('.status').innerText = "Online";
-            }, 1200);
-        }, 600);
+    appendMessage(text, 'sent');
+    messageInput.value = '';
+
+    try {
+        await fetch("/api/chat/send", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                receiver_id: receiverId,
+                content: text
+            })
+        });
+    } catch (e) {
+        console.error("Send error:", e);
     }
 }
 
@@ -77,4 +80,23 @@ messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSend();
 });
 
+
+async function loadMessages() {
+    const res = await fetch(`/api/chat/${receiverId}`);
+    const data = await res.json();
+
+    chatArea.innerHTML = "";
+
+    data.messages.forEach(msg => {
+        if (msg.sender_id == receiverId) {
+            appendMessage(msg.content, "received");
+        } else {
+            appendMessage(msg.content, "sent");
+        }
+    });
+}
+
+setInterval(loadMessages, 2000);
+
+loadMessages();
 

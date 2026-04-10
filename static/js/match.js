@@ -2,11 +2,10 @@ const params = new URLSearchParams(window.location.search);
 const hackathonId = params.get("hackathon");
 
 if (!hackathonId) {
-  alert("No hackathon selected!");
-  window.location.href = "/dashboard";
+  console.warn("No hackathon selected");
 }
 
-const invitesList = document.getElementById("invitesList");
+const invitesList = document.getElementById("invitesList") || null;
 const teamContainer = document.getElementById("teamContainer");
 const inviteBtn = document.getElementById("inviteBtn");
 const hackathonSelect = document.getElementById("hackathonSelect");
@@ -26,22 +25,15 @@ async function loadData() {
     return;
   }
 
-  console.log("CURRENT HACKATHON:", hackathonId);
-
-  // set dropdown
-  if (hackathonSelect) {
-    hackathonSelect.value = hackathonId;
-  }
-
   try {
-    // fetch invites
-    const inviteRes = await fetch(`/api/invites?hackathon_id=${hackathonId}`, { cache: "no-store" });
+    const inviteRes = await fetch(`/api/invites?hackathon_id=${hackathonId}`);
     const inviteData = await inviteRes.json();
     renderInvites(inviteData.invites || []);
 
-    // fetch team
-    const teamRes = await fetch(`/api/my-team?hackathon_id=${hackathonId}`, { cache: "no-store" });
+    const teamRes = await fetch(`/api/my-team?hackathon_id=${hackathonId}`);
     const teamData = await teamRes.json();
+
+    console.log("TEAM DATA:", teamData); // ✅ DEBUG
 
     if (!teamData.team) {
       renderNoTeam();
@@ -51,6 +43,13 @@ async function loadData() {
 
   } catch (e) {
     console.error("Load error:", e);
+  }
+
+  // ✅ SAFE CALL
+  try {
+    await loadJoinRequests();
+  } catch (e) {
+    console.error("Join request error:", e);
   }
 }
 
@@ -132,6 +131,7 @@ function renderTeam(team) {
     return;
   }
 
+
   let link = hackathonLinks[hackathonId] || "#";
 
   let html = `
@@ -141,22 +141,31 @@ function renderTeam(team) {
       </a>
     </div>
 
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Role</th>
-        <th>Skills</th>
-      </tr>
-  `;
+   <table>
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Skills</th>
+      <th>Chat</th>   <!-- ✅ ADD THIS -->
+    </tr>
+`;
 
   team.members.forEach(m => {
     html += `
-      <tr>
-        <td>${m.name}</td>
-        <td>${m.role}</td>
-        <td>${m.skills.join(", ")}</td>
-      </tr>
-    `;
+    <tr>
+      <td>${m.name}</td>
+      <td>${m.role}</td>
+      <td>${Array.isArray(m.skills) ? m.skills.join(", ") : ""}</td>
+      <td>
+        ${m.id === currentUserId
+        ? "<span style='opacity:0.5'>You</span>"
+        : `<button class="chat-btn" onclick="openChat(${m.id}, \`${m.name}\`)">
+  💬 Chat
+</button>`
+      }
+      </td>
+    </tr>
+  `;
   });
 
   html += `</table>`;
@@ -171,6 +180,12 @@ function renderTeam(team) {
     </button>
   `;
 
+  html += `
+  <button class="btn primary" onclick="openPostModal()" style="margin-top:10px;">
+    📢 Post Requirements
+  </button>
+`;
+
   teamContainer.innerHTML = html;
 }
 
@@ -179,7 +194,7 @@ async function respond(id, action) {
   try {
     const res = await fetch("/api/invite/respond", {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         invite_id: id,
         action: action
@@ -241,7 +256,7 @@ async function manualInvite() {
 
 
 async function leaveTeam() {
-  const hackathonId = new URLSearchParams(window.location.search).get("hackathon");
+
 
   if (!hackathonId) {
     alert("No hackathon selected");
@@ -299,5 +314,96 @@ function goBackToDashboard() {
   window.location.href = "/dashboard";
 }
 
+function openChat(userId, name) {
+  window.location.href = `/chat?user_id=${userId}&name=${encodeURIComponent(name)}&hackathon=${hackathonId}`;
+}
+
 // ================= START =================
 loadData();
+
+async function loadJoinRequests() {
+  const res = await fetch("/api/team/requests");
+  const data = await res.json();
+
+  const container = document.querySelector(".invites-panel #joinRequests");
+  if (!container) return;
+
+  container.innerHTML = ""; // ✅ CLEAR FIRST
+
+  if (!data.requests.length) {
+    container.innerHTML = "<p>No join requests</p>";
+    return;
+  }
+
+  data.requests.forEach(r => {
+    container.innerHTML += `
+      <div class="invite-card">
+        <div>🔥 ${r.name} applied to your team</div>
+
+        <div class="invite-actions">
+          <button onclick="respondRequest(${r.id}, 'accept')">Accept</button>
+          <button onclick="respondRequest(${r.id}, 'reject')">Reject</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+async function respondRequest(id, action) {
+  const res = await fetch("/api/team/request/respond", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      request_id: id,
+      action: action
+    })
+  });
+
+  const data = await res.json();
+  console.log("Join request response:", data);
+
+  loadData();
+}
+
+
+function openPostModal() {
+  const role = prompt("Enter role needed (e.g. Frontend Dev)");
+  const description = prompt("Describe what you need");
+  const commitment = prompt("Commitment level (low/medium/high)");
+
+  if (!role || !description) {
+    alert("All fields required");
+    return;
+  }
+
+  createPost(role, description, commitment);
+}
+
+async function createPost(role, description, commitment) {
+  try {
+    const res = await fetch("/api/team/post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        hackathon_id: hackathonId,
+        role: role,
+        description: description,
+        commitment: commitment
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.status === "posted") {
+      alert("Post created 🚀");
+    } else {
+      alert(data.error || "Error creating post");
+    }
+
+  } catch (e) {
+    console.error("Post error:", e);
+    alert("Network error");
+  }
+}

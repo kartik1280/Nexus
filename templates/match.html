@@ -10,6 +10,7 @@
 </head>
 
 <body>
+
   <div class="bg"></div>
 
   <!-- ================= HEADER ================= -->
@@ -23,7 +24,7 @@
 
     <!-- TOP BAR -->
     <div class="bar">
-      
+
       <!-- ✅ HACKATHON SWITCH -->
       <select id="hackathonSelect" onchange="switchHackathon()">
         <option value="devweek_2026">DeveloperWeek</option>
@@ -49,8 +50,11 @@
           <button id="inviteBtn">Invite</button>
         </div>
 
-        <h2>Invitations</h2>
+        <h3>Invites</h3>
         <div id="invitesList"></div>
+
+        <h3>Join Requests</h3>
+        <div id="joinRequests"></div>
       </div>
 
       <!-- TEAM -->
@@ -69,7 +73,11 @@
   </main>
 
   <!-- ================= SCRIPT ================= -->
-  <script src="{{ url_for('static', filename='js/match.js') }}"></script>
+
+  <script>
+    const currentUserId = {{ session['user_id'] | tojson }};
+  </script>
+  <script defer src="{{ url_for('static', filename='js/match.js') }}"></script>
 
 </body>
 

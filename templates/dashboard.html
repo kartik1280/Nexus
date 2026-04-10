@@ -25,7 +25,6 @@
       <nav class="topbar-nav">
         <a href="{{ url_for('dashboard') }}" class="active">Dashboard</a>
         <a href="#" onclick="startSwipe('devweek_2026')">Swipe</a>
-        <a href="#">Chat</a>
         <a href="#" onclick="goToInvites('devweek_2026')">Invites</a>
       </nav>
 
@@ -157,14 +156,15 @@
       </div>
     </section>
 
+
+
+
+    
     <!-- ================= GRID ================= -->
     <div class="content-grid">
 
       <div class="glass-card">
-        <div class="card-header">
-          <h3>Recent Matches</h3>
-        </div>
-        <div id="matchList" class="match-list"></div>
+        <div id="postsContainer"></div>
       </div>
 
       <div class="glass-card">

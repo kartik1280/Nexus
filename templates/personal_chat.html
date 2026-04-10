@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat | SkillSwipe</title>
-    <link rel="stylesheet" href="personal_chat.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/personal_chat.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
 </head>
+
 <body>
     <div class="chat-container">
         <!-- Header -->
         <header class="chat-header">
-            <button class="back-btn" onclick="window.location.href='match.html'">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
+            
+        
+            <button onclick="goBackToMatches()" class="back-btn"><i class="fa-solid fa-arrow-left"></i></button>
             <div class="user-info">
-                <img id="chatAvatar" src="defaultPFP.jpeg" alt="User Avatar" class="avatar">
+                
                 <div class="user-details">
                     <h2 id="chatName">Loading...</h2>
                     <span class="status">Online</span>
@@ -43,6 +47,19 @@
         </footer>
     </div>
 
-    <script src="personal_chat.js"></script>
+    <script src="{{ url_for('static', filename='js/personal_chat.js') }}"></script>
+    <script>
+function goBackToMatches() {
+  const params = new URLSearchParams(window.location.search);
+  const hackathonId = params.get("hackathon");
+
+  if (hackathonId) {
+    window.location.href = `/matches?hackathon=${hackathonId}`;
+  } else {
+    window.location.href = "/dashboard";
+  }
+}
+</script>
 </body>
+
 </html>

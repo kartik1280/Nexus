@@ -176,6 +176,59 @@ class TeamMember(db.Model):
         db.UniqueConstraint('team_id', 'user_id', name='unique_team_member'),
     )
 
+
+
+class Message(db.Model):
+    __tablename__ = "messages"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    sender_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, server_default=db.func.now())
+
+    sender = db.relationship("User", foreign_keys=[sender_id])
+    receiver = db.relationship("User", foreign_keys=[receiver_id])
+
+
+
+class TeamPost(db.Model):
+    __tablename__ = "team_posts"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
+    leader_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+
+    hackathon_id = db.Column(db.String(100), nullable=False)
+
+    role_needed = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    commitment = db.Column(db.String(100))
+
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    team = db.relationship("Team")
+    leader = db.relationship("User")
+
+
+class JoinRequest(db.Model):
+    __tablename__ = "join_requests"
+    
+    id = db.Column(db.Integer, primary_key=True)
+
+    sender_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
+
+    status = db.Column(db.Enum("pending", "accepted", "rejected"), default="pending")
+    __table_args__ = (
+    db.UniqueConstraint('sender_id', 'team_id', name='unique_join_request'),
+)
+    sender = db.relationship("User")
+    team = db.relationship("Team")
+
 # =========================
 # 🌐 ROUTES
 # =========================
@@ -729,7 +782,13 @@ def stats():
 def manual_invite():
     data = request.get_json()
 
-    sender_id = session.get('user_id')
+    if "user_id" not in session:
+        return {"error": "Not logged in"}, 401
+
+    if sender_id == user.id:
+        return {"error": "Cannot invite yourself"}
+
+    sender_id = session["user_id"]
     target = data.get("target")
     hackathon_id = data.get("hackathon_id")
 
@@ -778,6 +837,216 @@ def manual_invite():
     db.session.commit()
 
     return {"status": "sent"}
+
+
+@app.route("/chat")
+def chat_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+
+    return render_template("personal_chat.html")
+
+
+@app.route("/api/chat/send", methods=["POST"])
+def send_message():
+    if "user_id" not in session:
+        return {"error": "Not logged in"}, 401
+
+    data = request.get_json()
+
+    receiver_id = data.get("receiver_id")
+    content = data.get("content")
+
+    if receiver_id == session["user_id"]:
+        return {"error": "Cannot message yourself"}, 400
+
+    if not receiver_id or not content:
+        return {"error": "Missing data"}, 400
+
+    msg = Message(
+        sender_id=session["user_id"],
+        receiver_id=receiver_id,
+        content=content
+    )
+
+    db.session.add(msg)
+    db.session.commit()
+
+    return {"status": "sent"}
+
+
+@app.route("/api/chat/<int:user_id>")
+def get_messages(user_id):
+    if "user_id" not in session:
+        return {"messages": []}
+
+    current_user = session["user_id"]
+
+    messages = Message.query.filter(
+        ((Message.sender_id == current_user) & (Message.receiver_id == user_id)) |
+        ((Message.sender_id == user_id) & (Message.receiver_id == current_user))
+    ).order_by(Message.timestamp.asc()).all()
+
+    return {
+        "messages": [
+            {
+                "sender_id": m.sender_id,
+                "content": m.content,
+                "time": m.timestamp.strftime("%I:%M %p")
+            } for m in messages
+        ]
+    }
+
+
+@app.route("/api/team/post", methods=["POST"])
+def create_post():
+    if "user_id" not in session:
+        return {"error": "Not logged in"}, 401
+
+    data = request.get_json()
+
+    user_id = session["user_id"]
+    hackathon_id = data.get("hackathon_id")
+
+    team = get_user_team(user_id, hackathon_id)
+
+    if not team or team.leader_id != user_id:
+        return {"error": "Only leader can post"}
+    
+    if hackathon_id not in VALID_HACKATHONS:
+        return {"error": "invalid_hackathon"}
+
+    post = TeamPost(
+        team_id=team.id,
+        leader_id=user_id,
+        hackathon_id=hackathon_id,
+        role_needed=data.get("role"),
+        description=data.get("description"),
+        commitment=data.get("commitment")
+    )
+
+    db.session.add(post)
+    db.session.commit()
+
+    return {"status": "posted"}
+
+
+
+@app.route("/api/team/posts")
+def get_posts():
+    if "user_id" not in session:
+        return {"posts": []}
+
+    hackathon_id = request.args.get("hackathon_id")
+
+    if hackathon_id not in VALID_HACKATHONS:
+        return {"error": "invalid_hackathon"}
+
+    posts = TeamPost.query.filter_by(hackathon_id=hackathon_id)\
+    .filter(TeamPost.leader_id != session["user_id"])\
+    .all()
+
+    
+    return {
+        "posts": [
+            {
+                "id": p.id,
+                "team_id": p.team_id,
+                "leader_name": p.leader.name,
+                "role": p.role_needed,
+                "desc": p.description,
+                "commitment": p.commitment
+            } for p in posts
+        ]
+    }
+
+
+@app.route("/api/team/request", methods=["POST"])
+def request_join():
+    if "user_id" not in session:
+        return {"error": "Not logged in"}, 401
+
+    data = request.get_json()
+    team_id = data.get("team_id")
+
+    # ✅ check duplicate
+    existing = JoinRequest.query.filter_by(
+        sender_id=session["user_id"],
+        team_id=team_id
+    ).first()
+
+    if existing:
+        return {"status": "already_requested"}
+
+    req = JoinRequest(
+        sender_id=session["user_id"],
+        team_id=team_id
+    )
+
+    db.session.add(req)
+    db.session.commit()
+
+    return {"status": "requested"}
+
+@app.route("/api/team/requests")
+def get_requests():
+    if "user_id" not in session:
+        return {"requests": []}
+
+    user_id = session["user_id"]
+
+    teams = Team.query.filter_by(leader_id=user_id).all()
+    team_ids = [t.id for t in teams]
+
+    requests = JoinRequest.query.filter(
+        JoinRequest.team_id.in_(team_ids)
+    ).all()
+
+    return {
+        "requests": [
+            {
+                "id": r.id,
+                "name": r.sender.name,
+                "team_id": r.team_id
+            } for r in requests
+        ]
+    }
+
+
+@app.route("/api/team/request/respond", methods=["POST"])
+def respond_request():
+    data = request.get_json()
+    req = JoinRequest.query.get(data.get("request_id"))
+
+    if not req:
+        return {"error": "not found"}
+
+    try:
+        if data.get("action") == "accept":
+            existing_member = TeamMember.query.filter_by(
+                team_id=req.team_id,
+                user_id=req.sender_id
+            ).first()
+
+            if not existing_member:
+                db.session.add(TeamMember(
+                    team_id=req.team_id,
+                    user_id=req.sender_id
+                ))
+
+        # ✅ ALWAYS delete request
+        db.session.delete(req)
+
+        # ✅ IMPORTANT
+        db.session.commit()
+
+        return {"status": "done"}
+
+    except Exception as e:
+        db.session.rollback()
+        print("REQUEST RESPOND ERROR:", e)
+        return {"error": "server_error"}, 500
+    
 
 # =========================
 # 🚀 RUN APP

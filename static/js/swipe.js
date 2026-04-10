@@ -45,7 +45,7 @@ function showProfile() {
         <h3>No more profiles</h3>
         <p>Check back later 🚀</p>
       </div>`;
-    
+
     if (actions) actions.style.display = "none";
     return;
   }
@@ -66,11 +66,17 @@ function showProfile() {
         <div>${user.preferredRole}</div>
         <div>${user.availability}</div>
         <div class="skills">${skillSpans}</div>
-        ${
-          user.github
-            ? `<a href="${user.github}" target="_blank" class="github-link">🔗 GitHub</a>`
-            : ""
-        }
+        ${user.github
+      ? `
+    <div class="github-wrapper">
+      <a href="${user.github}" target="_blank" class="github-btn">
+        <i class="fab fa-github"></i>
+        View GitHub
+      </a>
+    </div>
+    `
+      : ""
+    }
       </div>
     </div>
   `;
@@ -190,13 +196,21 @@ function showToast(msg) {
 window.swipe = swipe;
 
 // ===================== NAVIGATION =====================
-function goBackToDashboard() {
-  window.location.href = "/dashboard";
-}
-
-function goToMatches() {
-  window.location.href = `/matches?hackathon=${hackathonId}`;
-}
 
 // ===================== INIT =====================
 loadProfiles();
+
+
+function goToDashboard() {
+  document.body.style.opacity = "0.5";
+  setTimeout(() => {
+    window.location.href = "/dashboard";
+  }, 150);
+}
+
+function goToMatches() {
+  document.body.style.opacity = "0.5";
+  setTimeout(() => {
+    window.location.href = `/matches?hackathon=${hackathonId}`;
+  }, 150);
+}
