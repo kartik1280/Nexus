@@ -24,7 +24,7 @@
             <a href="#how">How it Works</a>
             <a href="#events">Events</a>
             <a href="{{ url_for('auth') }}" class="btn"> Login / Sign Up </a>
-            
+
         </div>
     </nav>
 
@@ -44,7 +44,7 @@
         <div class="grid3">
             <div class="card">
                 <i class="fa-solid fa-robot icon"></i>
-                <h4>AI Team Matching</h4>
+                <h4>AI-Based logic Team Matching</h4>
                 <p>Automatically build balanced teams based on skills and interests.</p>
             </div>
 
@@ -91,23 +91,28 @@
         <h3 class="title center">Trending Opportunities</h3>
 
         <div class="grid3">
+
+            <!-- DEVWEEK -->
             <div class="card">
-                <h4>AI Innovation Hackathon</h4>
-                <small>Team 3–5 • Online</small>
-                <p>ML + Web + UI/UX needed</p>
+                <h4>DeveloperWeek 2026</h4>
+                <small>Feb 2 – Feb 20 • Online + San Jose</small>
+                <p>AI • APIs • Full Stack</p>
             </div>
 
+            <!-- HACK FOR HUMANITY -->
             <div class="card">
-                <h4>Smart City Challenge</h4>
-                <small>Team 4 • Hybrid</small>
-                <p>IoT + App Dev + Data</p>
+                <h4>Hack for Humanity 2026</h4>
+                <small>Feb 1 – Feb 28 • Global (Online)</small>
+                <p>Social Impact • AI • Web Dev</p>
             </div>
 
+            <!-- GHW -->
             <div class="card">
-                <h4>Project Expo</h4>
-                <small>Team 2–4 • Campus</small>
-                <p>Open to all domains</p>
+                <h4>Global Hack Week (MLH)</h4>
+                <small>Multiple Weeks • Global</small>
+                <p>GenAI • Cloud • APIs</p>
             </div>
+
         </div>
     </section>
 
@@ -116,7 +121,7 @@
         <h3>Ready to Find Your Dream Team?</h3>
         <p>Join now and never miss the right opportunity.</p>
         <a href="{{ url_for('auth') }}" class="btn btn-white">Create Profile</a>
-        
+
     </section>
 
     <footer class="foot">
@@ -124,7 +129,7 @@
     </footer>
 
     <script src="{{ url_for('static', filename='js/landing_page.js') }}"></script>
-    
+
 
 </body>
 
