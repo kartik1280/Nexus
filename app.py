@@ -22,7 +22,14 @@ VALID_HACKATHONS = [
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 db_url = os.getenv("DATABASE_URL")
-app.config["SQLALCHEMY_DATABASE_URI"] = db_url.replace("postgres://", "postgresql://")
+
+if not db_url:
+    raise Exception("DATABASE_URL not set")
+
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
@@ -790,34 +797,30 @@ def manual_invite():
     if "user_id" not in session:
         return {"error": "Not logged in"}, 401
 
-    if sender_id == user.id:
-        return {"error": "Cannot invite yourself"}
-
     sender_id = session["user_id"]
     target = data.get("target")
     hackathon_id = data.get("hackathon_id")
 
+    if not hackathon_id:
+        return {"error": "Missing hackathon_id"}, 400
+
     if hackathon_id not in VALID_HACKATHONS:
-        return {"error": "Invalid hackathon"}
+        return {"error": "Invalid hackathon"}, 400
 
-    user = None
-
+    # find user
     if str(target).isdigit():
         user = User.query.get(int(target))
     else:
         user = User.query.filter_by(name=target).first()
 
-    if not hackathon_id:
-        return {"error": "Missing hackathon_id"}
-    
     if not user:
-        return {"error": "User not found"}
+        return {"error": "User not found"}, 404
 
-    # ❌ prevent self invite
+    # prevent self invite (NOW SAFE)
     if sender_id == user.id:
-        return {"error": "Cannot invite yourself"}
+        return {"error": "Cannot invite yourself"}, 400
 
-    # ✅ check duplicate
+    # check duplicate
     existing = Invite.query.filter(
         (
             (Invite.sender_id == sender_id) & (Invite.receiver_id == user.id)
@@ -831,7 +834,7 @@ def manual_invite():
     if existing:
         return {"status": "already_sent"}
 
-    # ✅ CREATE invite 
+    # create invite
     invite = Invite(
         sender_id=sender_id,
         receiver_id=user.id,
@@ -1056,7 +1059,10 @@ def respond_request():
 # =========================
 # 🚀 RUN APP
 # =========================
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
