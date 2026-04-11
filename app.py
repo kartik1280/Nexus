@@ -89,7 +89,10 @@ class Profile(db.Model):
     commitment_level = db.Column(db.Integer)
 
     availability = db.Column(
-        db.Enum('weekends', 'evenings', 'flexible', 'full-time'),
+        db.Enum(
+            'weekends', 'evenings', 'flexible', 'full-time',
+            name="availability_enum"
+        ),
         nullable=False
     )
 
@@ -150,9 +153,12 @@ class Invite(db.Model):
     hackathon_id = db.Column(db.String(100), nullable=False)
 
     status = db.Column(
-        db.Enum('pending', 'accepted', 'rejected'),
+        db.Enum(
+            'pending', 'accepted', 'rejected',
+            name="invite_status_enum"
+        ),
         default='pending'
-    )
+)
 
     sender = db.relationship('User', foreign_keys=[sender_id])
     receiver = db.relationship('User', foreign_keys=[receiver_id])
@@ -234,7 +240,14 @@ class JoinRequest(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
-    status = db.Column(db.Enum("pending", "accepted", "rejected"), default="pending")
+    status = db.Column(
+        db.Enum(
+            "pending", "accepted", "rejected",
+            name="join_request_status_enum"
+        ),
+        default="pending"
+    )
+
     __table_args__ = (
     db.UniqueConstraint('sender_id', 'team_id', name='unique_join_request'),
 )
@@ -1056,13 +1069,22 @@ def respond_request():
         return {"error": "server_error"}, 500
     
 
+@app.route("/init-db")
+def init_db():
+    db.create_all()
+    return "DB initialized"
+
 # =========================
 # 🚀 RUN APP
 # =========================
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+        except Exception as e:
+            print("DB INIT ERROR:", e)
 
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+    
