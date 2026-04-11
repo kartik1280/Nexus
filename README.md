@@ -7,7 +7,6 @@ processed by a backend matching engine to compute compatibility scores using tec
 like Jaccard index. The platform features a swipe-based interface 
 for exploring and connecting with potential teammates.
 
-
 ---
 
 ## 🌟 Features
