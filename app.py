@@ -1,15 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 from sqlalchemy import CheckConstraint
 from sqlalchemy.exc import IntegrityError
 import os
-from flask import Flask, jsonify
+
 
 app = Flask(__name__)
 
 load_dotenv()
+
+
 
 VALID_HACKATHONS = [
     "devweek_2026",
@@ -17,7 +19,10 @@ VALID_HACKATHONS = [
     "ghw_2026"
 ]
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+
+db_url = os.getenv("DATABASE_URL")
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url.replace("postgres://", "postgresql://")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
