@@ -28,13 +28,13 @@ for exploring and connecting with potential teammates.
 - **Backend:** Flask (Python)  
 - **Database:** SQLite (SQLAlchemy ORM)  
 - **Authentication:** Flask-Bcrypt  
-- **Deployment:** Vercel  
+- **Deployment:** Render 
 
 ---
 
 ## 🌐 Live Demo
 
-👉 https://your-vercel-link-here
+👉https://skill-swipe-4str.onrender.com
 
 ---
 
@@ -51,7 +51,7 @@ for exploring and connecting with potential teammates.
 
 ## ⚠️ Known Issues / Bugs
 
-This is a beta version. Some edge cases may not be fully stable. Bugs will be fixed in upcoming updates.
+This is a beta version. Some edge cases may not be fully stable. 
 
 - Some buttons (chat, leave team, invites) may occasionally not respond  
 - Team creation may behave inconsistently after multiple attempts  
