@@ -1,4 +1,4 @@
-# SkillSwipe - Intelligent Teammate Matching System
+# SkillSwipe - Intelligent Teammate Matching Systems
 
 SkillSwipe is a full-stack web application that helps students form effective teams 
 for hackathons and projects using data-driven matchmaking.
@@ -9,7 +9,7 @@ for exploring and connecting with potential teammates.
 
 ---
 
-## 🌟 Features
+## 🌟 Featuress
 
 - 🔐 User Authentication (Signup/Login)
 - 🧠 Skill & Interest-Based Matching
