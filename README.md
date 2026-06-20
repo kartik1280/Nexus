@@ -79,7 +79,7 @@ Kirti Saini (Frontend Developer)
 Priyanshu (Frontend Developer)
 Kartik Sharma (Backend Developer)
 Jain Akshat (Backend Developer)
-Nimarta Thind Kaur (Database Management)
+Nimarta Kaur Thind (Database Management)
 Jayesh Sriwastava (Deployment & Project Coordinator) 
 
 ---
